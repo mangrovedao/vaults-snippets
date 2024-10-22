@@ -1,0 +1,17 @@
+{
+  "name": "vaults-snippets",
+  "module": "src/index.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "pino": "^9.5.0",
+    "pino-pretty": "^11.3.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@mangrovedao/mgv": "^0.9.10",
+    "viem": "^2.21.32"
+  }
+}

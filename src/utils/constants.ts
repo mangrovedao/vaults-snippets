@@ -1,0 +1,1 @@
+export const FEE_PRECISION = 1e5;
