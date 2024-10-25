@@ -54,7 +54,7 @@ export async function removeFromWhitelist(
       abi: MangroveVaultAbi,
       functionName: "disallowSwapContract",
       args: [swapContract],
-      account: sender,
+      account: client.account,
     });
 
     const tx = await writeContract(client, request);

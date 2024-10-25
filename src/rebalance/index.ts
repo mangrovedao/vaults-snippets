@@ -33,7 +33,7 @@ export async function rebalance(
         args.amountInMin ?? 0n,
         args.sell,
       ],
-      account: sender,
+      account: client.account,
     });
 
     const tx = await writeContract(client, request);

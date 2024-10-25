@@ -42,7 +42,7 @@ export async function deployVault(
           args.oracle,
           args.owner ?? sender,
         ],
-        account: sender,
+        account: client.account,
       });
 
     logger.info(`creating vault at address ${vault} with params :`, args);

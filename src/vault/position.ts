@@ -69,7 +69,7 @@ export async function setPosition(
       abi: MangroveVaultAbi,
       functionName: "setPosition",
       args: [data],
-      account: sender,
+      account: client.account,
     });
     const tx = await writeContract(client, setPositionRequest);
     logger.info(`waiting for tx hash: ${tx}`);

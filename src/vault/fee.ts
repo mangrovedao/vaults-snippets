@@ -17,7 +17,6 @@ export type FeeData = {
 export async function setFee(
   client: Client,
   vault: Address,
-  sender: Address,
   data: FeeData
 ) {
   try {
@@ -37,7 +36,7 @@ export async function setFee(
       abi: MangroveVaultAbi,
       functionName: "setFeeData",
       args: [performanceFee, managementFee, data.feeRecipient],
-      account: sender,
+      account: client.account,
     });
     const tx = await writeContract(client, setFeeRequest);
     logger.info(`waiting for tx hash: ${tx}`);

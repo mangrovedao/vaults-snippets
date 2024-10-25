@@ -11,7 +11,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@mangrovedao/mgv": "^0.9.10",
+    "@mangrovedao/mgv": "^0.9.11",
     "viem": "^2.21.32"
   }
 }

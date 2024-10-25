@@ -61,7 +61,7 @@ export async function deployOracle(
           quoteFeed2,
           args.salt ?? toHex(0, { size: 0x20 }),
         ],
-        account: sender,
+        account: client.account,
       });
 
     logger.info(`oracle will be deployed at ${oracle}`);
@@ -78,7 +78,7 @@ export async function deployOracle(
       return undefined;
     }
   } catch (error) {
-    logger.error(`error deploying oracle: ${error}`);
+    logger.error(error);
     return undefined;
   }
 }
