@@ -31,7 +31,8 @@ export async function deployOracle(
   client: Client,
   oracleFactory: Address,
   sender: Address,
-  args: DeployOracleArgs
+  args: DeployOracleArgs,
+  noThrow: boolean = true
 ): Promise<Address | undefined> {
   try {
     if (
@@ -78,6 +79,9 @@ export async function deployOracle(
       return undefined;
     }
   } catch (error) {
+    if (!noThrow) {
+      throw error;
+    }
     logger.error(error);
     return undefined;
   }

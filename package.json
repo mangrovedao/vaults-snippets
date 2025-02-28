@@ -3,15 +3,17 @@
   "module": "src/index.ts",
   "type": "module",
   "devDependencies": {
-    "@types/bun": "latest",
-    "pino": "^9.5.0",
-    "pino-pretty": "^11.3.0"
+    "@types/bun": "^1.2.4",
+    "pino": "^9.6.0",
+    "pino-pretty": "^13.0.0"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.7.3"
   },
   "dependencies": {
-    "@mangrovedao/mgv": "^0.9.11",
-    "viem": "^2.21.32"
+    "@mangrovedao/mgv": "^0.9.19",
+    "inquirer": "^12.4.2",
+    "inquirer-autocomplete-standalone": "^0.8.1",
+    "viem": "^2.23.5"
   }
 }
