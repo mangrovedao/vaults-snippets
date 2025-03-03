@@ -1,9 +1,11 @@
-import { isAddress, type Address, type Client } from "viem";
-import type { RegistryEntry } from "../registry";
+import { isAddress, type Address, type Client, type PublicClient, type WalletClient } from "viem";
+import type { RegistryEntry } from "../../registry";
 import inquirer from "inquirer";
 import type { MarketParams } from "@mangrovedao/mgv";
-import { logger } from "../utils/logger";
-import { deployVault } from "../vault/factory";
+import { logger } from "../../utils/logger";
+import { deployVault } from "../../vault/factory";
+import { selectAddress, selectMarket } from "../select";
+import { deployOracleWithChoice } from "../chainlink/deployOracle";
 
 export async function deployVaultWithChoices(
   client: Client,
@@ -121,4 +123,58 @@ export async function deployVaultWithChoices(
     return false;
   }
   return vault;
+}
+
+export async function deployVaultAndOracle(
+  publicClient: PublicClient,
+  walletClient: WalletClient,
+  registry: RegistryEntry,
+  sender: Address
+) {
+  const market = await selectMarket(publicClient, registry);
+  const oracle = await deployOracleWithChoice(
+    walletClient,
+    market.base,
+    market.quote,
+    registry,
+    sender
+  );
+  if (!oracle) {
+    logger.error("Oracle deployment failed");
+    return;
+  }
+  const vault = await deployVaultWithChoices(
+    walletClient,
+    market,
+    registry,
+    oracle,
+    sender
+  );
+  if (!vault) {
+    logger.error("Vault deployment failed");
+    return;
+  }
+  logger.info(`Vault deployed at ${vault} with oracle ${oracle}`);
+}
+
+export async function deployVaultOnly(
+  publicClient: PublicClient,
+  walletClient: WalletClient,
+  registry: RegistryEntry,
+  sender: Address
+) {
+  const market = await selectMarket(publicClient, registry);
+  const oracle = await selectAddress("Enter the oracle address");
+  const vault = await deployVaultWithChoices(
+    walletClient,
+    market,
+    registry,
+    oracle,
+    sender
+  );
+  if (!vault) {
+    logger.error("Vault deployment failed");
+    return;
+  }
+  logger.info(`Vault deployed at ${vault} with oracle ${oracle}`);
 }

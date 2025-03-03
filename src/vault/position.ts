@@ -41,7 +41,6 @@ function fundsStateToString(fundsState: FundsState) {
 export async function setPosition(
   client: Client,
   vault: Address,
-  sender: Address,
   data: PositionData
 ) {
   try {

@@ -56,19 +56,23 @@ export async function selectMarket(client: Client, registry: RegistryEntry) {
   return market;
 }
 
-export async function selectAddress(message: string = "Enter an address") {
+export async function selectAddress(
+  message: string = "Enter an address",
+  defaultValue?: Address
+) {
   const { address } = (await inquirer.prompt([
     {
-      type: "input", 
+      type: "input",
       message,
       name: "address",
+      default: defaultValue,
       validate: (value: string | undefined) => {
         if (value && isAddress(value)) {
           return true;
         }
         return "Please enter a valid Ethereum address";
-      }
-    }
+      },
+    },
   ])) as { address: Address };
   return address;
 }
