@@ -70,16 +70,14 @@ export async function setPosition(
       args: [data],
       account: client.account,
     });
-    const tx = await writeContract(client, setPositionRequest);
-    logger.info(`waiting for tx hash: ${tx}`);
-    const receipt = await waitForTransactionReceipt(client, { hash: tx });
-    if (receipt.status === "success") {
-      logger.info(`position set for vault ${vault}`);
-      return true;
-    } else {
-      logger.error(`position not set for vault ${vault}`);
-      return false;
-    }
+
+    const receipt = await logger.handleRequest(setPositionRequest, client, {
+      header: `setting position for vault ${vault} with data:`,
+      success: (block, hash) => `position set for vault ${vault} in block ${block}: ${hash}`,
+      failure: (hash) => `position not set for vault ${vault}: ${hash}`,
+      label: "Position setting",
+    });
+    return receipt.status === "success";
   } catch (error) {
     logger.error(error);
     return false;
@@ -101,16 +99,14 @@ export async function refreshPosition(
       functionName: "updatePosition",
       account: sender,
     });
-    const tx = await writeContract(client, refreshPositionRequest);
-    logger.info(`waiting for tx hash: ${tx}`);
-    const receipt = await waitForTransactionReceipt(client, { hash: tx });
-    if (receipt.status === "success") {
-      logger.info(`position refreshed for vault ${vault}`);
-      return true;
-    } else {
-      logger.error(`position not refreshed for vault ${vault}`);
-      return false;
-    }
+    const receipt = await logger.handleRequest(refreshPositionRequest, client, {
+      header: `refreshing position for vault ${vault} with current parameters`,
+      success: (block, hash) =>
+        `position refreshed for vault ${vault} in block ${block}: ${hash}`,
+      failure: (hash) => `position not refreshed for vault ${vault}: ${hash}`,
+      label: "Position refreshing",
+    });
+    return receipt.status === "success";
   } catch (error) {
     logger.error(error);
     return false;

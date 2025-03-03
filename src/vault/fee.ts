@@ -1,8 +1,6 @@
 import type { Address, Client } from "viem";
 import {
   simulateContract,
-  waitForTransactionReceipt,
-  writeContract,
 } from "viem/actions";
 import { MangroveVaultAbi } from "../../abis/MangroveVault";
 import { logger } from "../utils/logger";
@@ -14,11 +12,7 @@ export type FeeData = {
   managementFee: number; // 1% = 0.01 annual
 };
 
-export async function setFee(
-  client: Client,
-  vault: Address,
-  data: FeeData
-) {
+export async function setFee(client: Client, vault: Address, data: FeeData) {
   try {
     logger.info(`setting fee for vault ${vault} with data:`);
 
@@ -38,16 +32,15 @@ export async function setFee(
       args: [performanceFee, managementFee, data.feeRecipient],
       account: client.account,
     });
-    const tx = await writeContract(client, setFeeRequest);
-    logger.info(`waiting for tx hash: ${tx}`);
-    const receipt = await waitForTransactionReceipt(client, { hash: tx });
-    if (receipt.status === "success") {
-      logger.info(`fee set for vault ${vault}`);
-      return true;
-    } else {
-      logger.error(`fee setting failed for vault ${vault}`);
-      return false;
-    }
+
+    const receipt = await logger.handleRequest(setFeeRequest, client, {
+      header: `setting fee for vault ${vault} with data:`,
+      success: (block, hash) => `fee set for vault ${vault} in block ${block}: ${hash}`,
+      failure: (hash) => `fee setting failed for vault ${vault}: ${hash}`,
+      label: "Fee setting",
+    });
+
+    return receipt.status === "success";
   } catch (error) {
     logger.error(error);
     return false;

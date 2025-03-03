@@ -65,19 +65,14 @@ export async function deployOracle(
         account: client.account,
       });
 
-    logger.info(`oracle will be deployed at ${oracle}`);
+    const receipt = await logger.handleRequest(deployOracleRequest, client, {
+      header: `oracle will be deployed at ${oracle}`,
+      success: (block, hash) => `oracle deployed at ${oracle} in block ${block}: ${hash}`,
+      failure: (hash) => `oracle deployment failed at ${oracle}: ${hash}`,
+      label: "Oracle deployment",
+    });
 
-    const tx = await writeContract(client, deployOracleRequest);
-    logger.info(`waiting for tx hash: ${tx}`);
-    const receipt = await waitForTransactionReceipt(client, { hash: tx });
-
-    if (receipt.status === "success") {
-      logger.info(`oracle deployed at ${oracle}`);
-      return oracle;
-    } else {
-      logger.error(`oracle deployment failed`);
-      return undefined;
-    }
+    return receipt.status === "success" ? oracle : undefined;
   } catch (error) {
     if (!noThrow) {
       throw error;

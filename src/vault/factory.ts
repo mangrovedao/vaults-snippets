@@ -45,15 +45,12 @@ export async function deployVault(
         account: client.account,
       });
 
-    logger.info(`creating vault at address ${vault} with params :`, args);
-    const tx = await writeContract(client, createVaultRequest);
-    logger.info(`waiting for tx hash: ${tx}`);
-    const receipt = await waitForTransactionReceipt(client, { hash: tx });
-    if (receipt.status === "success") {
-      logger.info(`vault created at address ${vault}`);
-    } else {
-      logger.error(`vault creation failed at address ${vault}`);
-    }
+    await logger.handleRequest(createVaultRequest, client, {
+      header: `creating vault at address ${vault} with`,
+      success: (block, hash) => `vault created at address ${vault} in block ${block}: ${hash}`,
+      failure: (hash) => `vault creation failed at address ${vault}: ${hash}`,
+      label: "Vault creation",
+    });
     return vault;
   } catch (error) {
     logger.error(error);

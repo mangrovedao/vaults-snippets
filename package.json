@@ -2,6 +2,9 @@
   "name": "vaults-snippets",
   "module": "src/index.ts",
   "type": "module",
+  "scripts": {
+    "cli": "bun run src/cli/index.ts"
+  },
   "devDependencies": {
     "@types/bun": "^1.2.4",
     "pino": "^9.6.0",
@@ -14,6 +17,7 @@
     "@mangrovedao/mgv": "^0.9.19",
     "inquirer": "^12.4.2",
     "inquirer-autocomplete-standalone": "^0.8.1",
+    "ora": "^8.2.0",
     "viem": "^2.23.5"
   }
 }
