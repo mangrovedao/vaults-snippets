@@ -4,6 +4,8 @@ import type { PublicClient } from "viem";
 import type { RegistryEntry } from "../../registry";
 import { selectAddress } from "../select";
 import { formatUnits } from "viem";
+import { logger } from "../../utils/logger";
+import chalk from "chalk";
 
 export async function viewVault(
   publicClient: PublicClient,
@@ -18,30 +20,8 @@ export async function viewVault(
   console.log(
     `Market : ${data.market.base.symbol}/${data.market.quote.symbol} (tickSpacing: ${data.market.tickSpacing})`
   );
-  console.log("fees :");
-  console.table({
-    performanceFee: `${data.feeData.performanceFee * 100}%`,
-    managementFee: `${data.feeData.managementFee * 100}%`,
-  });
-  if (data.position.params.pricePoints === 0) {
-    console.log("no position set");
-  } else {
-    console.log("position :");
-    console.table({
-      tickIndex0: data.position.tickIndex0,
-      tickOffset: data.position.tickOffset,
-      fundsState:
-        data.position.fundsState === FundsState.Active
-          ? "active"
-          : data.position.fundsState === FundsState.Passive
-          ? "passive"
-          : "vault",
-      gasprice: data.position.params.gasprice,
-      gasreq: data.position.params.gasreq,
-      stepSize: data.position.params.stepSize,
-      pricePoints: data.position.params.pricePoints,
-    });
-  }
+  logger.logFees(data.feeData);
+  logger.logPosition(data.position, data.market);
   console.log("Balances :");
   console.table({
     kandel: {
@@ -75,11 +55,13 @@ export async function viewVault(
   console.log(
     `Current price : ${data.currentPrice} (tick: ${data.currentTick})`
   );
-  console.log(`position from kandel contract :`);
+  console.log(chalk.bold("position from kandel contract :"));
   console.table({
     ...data.kandelState,
     asks: data.kandelState.asks.length,
     bids: data.kandelState.bids.length,
   });
-  console.table([...data.kandelState.asks, ...data.kandelState.bids]);
+  if (data.kandelState.asks.length > 0 || data.kandelState.bids.length > 0) {
+    console.table([...data.kandelState.asks, ...data.kandelState.bids]);
+  }
 }

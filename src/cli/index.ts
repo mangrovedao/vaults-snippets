@@ -6,6 +6,7 @@ import { registry } from "../registry";
 import { PossibleActions, selectAction } from "./select";
 import { deployVaultAndOracle, deployVaultOnly, viewVault } from "./vault";
 import { editVault } from "./vault/edit";
+import { addLiquidity } from "./vault/add-liquidity";
 
 async function main() {
   const account = privateKeyToAccount(process.env.PRIVATE_KEY! as Hex);
@@ -44,6 +45,9 @@ async function main() {
       break;
     case PossibleActions.EDIT_VAULT:
       await editVault(publicClient, walletClient, chain);
+      break;
+    case PossibleActions.ADD_LIQUIDITY:
+      await addLiquidity(publicClient, walletClient, account.address, chain);
       break;
   }
 }
