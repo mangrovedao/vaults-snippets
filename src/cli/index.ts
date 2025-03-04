@@ -7,6 +7,7 @@ import { PossibleActions, selectAction } from "./select";
 import { deployVaultAndOracle, deployVaultOnly, viewVault } from "./vault";
 import { editVault } from "./vault/edit";
 import { addLiquidity } from "./vault/add-liquidity";
+import { removeLiquidity } from "./vault/remove-liquidity";
 
 async function main() {
   const account = privateKeyToAccount(process.env.PRIVATE_KEY! as Hex);
@@ -48,6 +49,9 @@ async function main() {
       break;
     case PossibleActions.ADD_LIQUIDITY:
       await addLiquidity(publicClient, walletClient, account.address, chain);
+      break;
+    case PossibleActions.REMOVE_LIQUIDITY:
+      await removeLiquidity(publicClient, walletClient, account.address, chain);
       break;
   }
 }

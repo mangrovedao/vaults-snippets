@@ -1,6 +1,6 @@
 import type { MarketParams } from "@mangrovedao/mgv";
 import { erc20Abi, type Address, type Client } from "viem";
-import { multicall } from "viem/actions";
+import { multicall, readContract } from "viem/actions";
 
 export async function getBalancesForMarket(
   client: Client,
@@ -28,4 +28,18 @@ export async function getBalancesForMarket(
     base,
     quote,
   };
+}
+
+export async function getBalanceForToken(
+  client: Client,
+  account: Address,
+  token: Address
+) {
+  const balance = await readContract(client, {
+    address: token,
+    abi: erc20Abi,
+    functionName: "balanceOf",
+    args: [account],
+  });
+  return balance;
 }
