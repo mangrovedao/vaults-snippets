@@ -1,4 +1,9 @@
-import { formatUnits, type Address, type Client } from "viem";
+import {
+  encodeFunctionData,
+  formatUnits,
+  type Address,
+  type Client,
+} from "viem";
 import { simulateContract } from "viem/actions";
 import { MintHelperV1Abi } from "../../../abis/MintHelperV1ABI";
 import type { MarketParams } from "@mangrovedao/mgv";
@@ -35,6 +40,14 @@ export async function mint(
   if (!success) {
     return false;
   }
+
+  console.log(
+    `${mintHelper} ${encodeFunctionData({
+      abi: MintHelperV1Abi,
+      functionName: "mint",
+      args: [vault, maxBaseAmount, maxQuoteAmount, minShares],
+    })}`
+  );
   const {
     request,
     result: [share, baseAmount, quoteAmount],

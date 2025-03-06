@@ -1,23 +1,19 @@
 import { toHex, zeroAddress, type Address, type Client, type Hex } from "viem";
-import { logger } from "../utils/logger";
-import {
-  simulateContract,
-  writeContract,
-  waitForTransactionReceipt,
-} from "viem/actions";
-import { MangroveChainlinkOracleFactoryAbi } from "../../abis/MangroveChainlinkOracleFactory";
+import { logger } from "../../utils/logger";
+import { simulateContract } from "viem/actions";
+import { MangroveChainlinkOracleFactoryAbi } from "../../../abis/MangroveChainlinkOracleFactory";
 
-export type Feed = {
+export type ChainlinkFeed = {
   feed: Address;
   baseDecimals: bigint;
   quoteDecimals: bigint;
 };
 
-export type DeployOracleArgs = {
-  baseFeed1?: Feed;
-  baseFeed2?: Feed;
-  quoteFeed1?: Feed;
-  quoteFeed2?: Feed;
+export type DeployChainlinkV1OracleArgs = {
+  baseFeed1?: ChainlinkFeed;
+  baseFeed2?: ChainlinkFeed;
+  quoteFeed1?: ChainlinkFeed;
+  quoteFeed2?: ChainlinkFeed;
   salt?: Hex;
 };
 
@@ -27,11 +23,10 @@ const DEFAULT_FEED = {
   quoteDecimals: 0n,
 };
 
-export async function deployOracle(
+export async function deployChainlinkV1Oracle(
   client: Client,
   oracleFactory: Address,
-  sender: Address,
-  args: DeployOracleArgs,
+  args: DeployChainlinkV1OracleArgs,
   noThrow: boolean = true
 ): Promise<Address | undefined> {
   try {
@@ -67,7 +62,8 @@ export async function deployOracle(
 
     const receipt = await logger.handleRequest(deployOracleRequest, client, {
       header: `oracle will be deployed at ${oracle}`,
-      success: (block, hash) => `oracle deployed at ${oracle} in block ${block}: ${hash}`,
+      success: (block, hash) =>
+        `oracle deployed at ${oracle} in block ${block}: ${hash}`,
       failure: (hash) => `oracle deployment failed at ${oracle}: ${hash}`,
       label: "Oracle deployment",
     });

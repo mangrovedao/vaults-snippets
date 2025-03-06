@@ -1,6 +1,7 @@
 import ora from "ora";
 import pino from "pino";
 import {
+  encodeFunctionData,
   formatEther,
   type Client,
   type Hex,

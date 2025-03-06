@@ -1,11 +1,17 @@
-import { isAddress, type Address, type Client, type PublicClient, type WalletClient } from "viem";
+import {
+  isAddress,
+  type Address,
+  type Client,
+  type PublicClient,
+  type WalletClient,
+} from "viem";
 import type { RegistryEntry } from "../../registry";
 import inquirer from "inquirer";
 import type { MarketParams } from "@mangrovedao/mgv";
 import { logger } from "../../utils/logger";
 import { deployVault } from "../../vault/factory";
 import { selectAddress, selectMarket } from "../select";
-import { deployOracleWithChoice } from "../chainlink/deployOracle";
+import { deployOracleForm } from "../oracle";
 
 export async function deployVaultWithChoices(
   client: Client,
@@ -115,7 +121,7 @@ export async function deployVaultWithChoices(
       name,
       symbol,
       decimals,
-    },
+    }
   );
 
   if (!vault) {
@@ -132,11 +138,11 @@ export async function deployVaultAndOracle(
   sender: Address
 ) {
   const market = await selectMarket(publicClient, registry);
-  const oracle = await deployOracleWithChoice(
+  const oracle = await deployOracleForm(
     walletClient,
+    registry,
     market.base,
     market.quote,
-    registry,
     sender
   );
   if (!oracle) {

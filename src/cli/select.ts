@@ -1,5 +1,5 @@
 import inquirer from "inquirer";
-import { isAddress, type Address, type Client } from "viem";
+import { formatUnits, isAddress, parseUnits, type Address, type Client } from "viem";
 import type { RegistryEntry } from "../registry";
 import { getOpenMarkets } from "@mangrovedao/mgv/actions";
 import type { MarketParams } from "@mangrovedao/mgv";
@@ -7,6 +7,7 @@ import type { MarketParams } from "@mangrovedao/mgv";
 export enum PossibleActions {
   CREATE_VAULT_FROM_ORACLE = "Create vault from oracle",
   CREATE_VAULT_FROM_SCRATCH = "Create vault from scratch",
+  DEPLOY_ORACLE = "Deploy oracle",
   VIEW_VAULT = "View vault",
   EDIT_VAULT = "Edit vault",
   ADD_LIQUIDITY = "Add liquidity",
@@ -75,4 +76,25 @@ export async function selectAddress(
     },
   ])) as { address: Address };
   return address;
+}
+
+export async function selectNumberWithDecimals(
+  decimals: number,
+  message: string = "Enter a value (in decimal)",
+  defaultValue: bigint = 0n
+) {
+  const { number } = (await inquirer.prompt({
+    type: "input",
+    message,
+    name: "number",
+    default: formatUnits(defaultValue, decimals),
+    validate: (value: string | undefined) => {
+      if (value === undefined) return "Please enter a value";
+      const number = parseUnits(value, decimals);
+      if (number < 0n) return "Please enter a positive number";
+      return true;
+    },
+    filter: (value: string) => parseUnits(value, decimals),
+  })) as { number: bigint };
+  return number;
 }

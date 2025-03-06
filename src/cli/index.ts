@@ -3,11 +3,12 @@ import { privateKeyToAccount } from "viem/accounts";
 import { logger } from "../utils/logger";
 import { chooseChain } from "./chain";
 import { registry } from "../registry";
-import { PossibleActions, selectAction } from "./select";
+import { PossibleActions, selectAction, selectMarket } from "./select";
 import { deployVaultAndOracle, deployVaultOnly, viewVault } from "./vault";
 import { editVault } from "./vault/edit";
 import { addLiquidity } from "./vault/add-liquidity";
 import { removeLiquidity } from "./vault/remove-liquidity";
+import { deployOracleForm } from "./oracle";
 
 async function main() {
   const account = privateKeyToAccount(process.env.PRIVATE_KEY! as Hex);
@@ -52,6 +53,10 @@ async function main() {
       break;
     case PossibleActions.REMOVE_LIQUIDITY:
       await removeLiquidity(publicClient, walletClient, account.address, chain);
+      break;
+    case PossibleActions.DEPLOY_ORACLE:
+      const market = await selectMarket(publicClient, chain);
+      await deployOracleForm(walletClient, chain, market.base, market.quote, account.address);
       break;
   }
 }

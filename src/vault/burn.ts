@@ -22,6 +22,7 @@ export async function burn(
     functionName: "burn",
     args: [shares, minBaseOut, minQuoteOut],
     account: client.account,
+    gas: 20_000_000n,
   });
 
   const baseFormatted = market

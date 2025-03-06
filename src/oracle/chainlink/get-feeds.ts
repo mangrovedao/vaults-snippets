@@ -9,7 +9,9 @@ export type ChainLinkFeedDoc = {
   hidden: boolean;
 };
 
-export async function getFeeds(chainlinkMetadataLink: string) {
+export async function getFeeds(
+  chainlinkMetadataLink: string
+): Promise<ChainLinkFeedDoc[]> {
   const response = await fetch(chainlinkMetadataLink);
   const data = await response.json();
   return data
