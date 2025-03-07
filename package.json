@@ -19,6 +19,7 @@
     "inquirer": "^12.4.2",
     "inquirer-autocomplete-standalone": "^0.8.1",
     "ora": "^8.2.0",
-    "viem": "^2.23.5"
+    "viem": "^2.23.5",
+    "zod": "^3.24.2"
   }
 }

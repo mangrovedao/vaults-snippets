@@ -10,7 +10,7 @@ import inquirer from "inquirer";
 import type { MarketParams } from "@mangrovedao/mgv";
 import { logger } from "../../utils/logger";
 import { deployVault } from "../../vault/factory";
-import { selectAddress, selectMarket } from "../select";
+import { promptToSaveVault, selectAddress, selectMarket } from "../select";
 import { deployOracleForm } from "../oracle";
 
 export async function deployVaultWithChoices(
@@ -128,6 +128,7 @@ export async function deployVaultWithChoices(
     logger.error("Vault deployment failed");
     return false;
   }
+  await promptToSaveVault(client, vault, registry.chain.id);
   return vault;
 }
 

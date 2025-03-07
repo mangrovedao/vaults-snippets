@@ -6,7 +6,7 @@ import {
 import type { RegistryEntry } from "../../registry";
 import { getCurrentVaultState } from "../../vault/read";
 import { getBalanceForToken } from "../balances";
-import { selectAddress } from "../select";
+import { selectAddress, selectVault } from "../select";
 import ora from "ora";
 import inquirer from "inquirer";
 import { burn } from "../../vault/burn";
@@ -17,7 +17,7 @@ export async function removeLiquidity(
   account: Address,
   registry: RegistryEntry
 ) {
-  const vault = await selectAddress("Choose a vault");
+  const vault = await selectVault(publicClient, registry.chain.id);
   const loader = ora("Getting vault state...").start();
   const vaultData = await getCurrentVaultState(
     publicClient,

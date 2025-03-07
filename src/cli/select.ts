@@ -1,8 +1,19 @@
 import inquirer from "inquirer";
-import { formatUnits, isAddress, parseUnits, type Address, type Client } from "viem";
+import {
+  erc20Abi,
+  formatUnits,
+  isAddress,
+  parseUnits,
+  type Address,
+  type Client,
+} from "viem";
 import type { RegistryEntry } from "../registry";
 import { getOpenMarkets } from "@mangrovedao/mgv/actions";
 import type { MarketParams } from "@mangrovedao/mgv";
+import { z } from "zod";
+import { logger } from "../utils/logger";
+import { getCurrentVaultState } from "../vault/read";
+import { readContract } from "viem/actions";
 
 export enum PossibleActions {
   CREATE_VAULT_FROM_ORACLE = "Create vault from oracle",
@@ -97,4 +108,135 @@ export async function selectNumberWithDecimals(
     filter: (value: string) => parseUnits(value, decimals),
   })) as { number: bigint };
   return number;
+}
+
+const SavedVaultV1Schema = z.object({
+  address: z.custom<Address>((r) => typeof r === "string" && isAddress(r)),
+  name: z.string(),
+  chainId: z.number(),
+  label: z.string().optional(),
+});
+
+const SaveFileSchema = z.object({
+  version: z.literal(1),
+  vaults: z.array(SavedVaultV1Schema),
+});
+
+type SaveFile = z.infer<typeof SaveFileSchema>;
+type SavedVault = z.infer<typeof SavedVaultV1Schema>;
+
+const SAVE_FILE = ".save/vaults.json";
+
+async function loadSavedVaults(): Promise<SaveFile> {
+  const file = Bun.file(SAVE_FILE);
+  if (!(await file.exists())) {
+    return {
+      version: 1,
+      vaults: [],
+    };
+  }
+  const content = await file.json();
+  const result = SaveFileSchema.safeParse(content);
+  if (!result.success) {
+    logger.error("Invalid save file", result.error);
+    return {
+      version: 1,
+      vaults: [],
+    };
+  }
+  return result.data;
+}
+
+async function saveVault(vault: SavedVault) {
+  const currentContent = await loadSavedVaults();
+  currentContent.vaults.push(vault);
+  await Bun.write(SAVE_FILE, JSON.stringify(currentContent, null, 2));
+}
+
+export async function promptToSaveVault(
+  client: Client,
+  address: Address,
+  chainId: number
+) {
+  const { shouldSave } = await inquirer.prompt([
+    {
+      type: "confirm",
+      name: "shouldSave",
+      message: "Do you want to save this vault for future use?",
+      default: true,
+    },
+  ]);
+
+  if (shouldSave) {
+    try {
+      const vaultNamePromise = readContract(client, {
+        address,
+        abi: erc20Abi,
+        functionName: "name",
+      });
+      const { label } = await inquirer.prompt([
+        {
+          type: "input",
+          name: "label",
+          message: "Enter an optional label for this vault:",
+        },
+      ]);
+      const vaultName = await vaultNamePromise;
+
+      const savedVault: SavedVault = {
+        address,
+        name: vaultName,
+        chainId,
+        ...(label ? { label } : {}),
+      };
+
+      await saveVault(savedVault);
+    } catch (error) {
+      logger.error("Failed to save vault:", error);
+    }
+  }
+}
+
+export async function selectVault(
+  client: Client,
+  chainId: number,
+  message: string = "Select a vault"
+) {
+  const savedVaults = (await loadSavedVaults()).vaults.filter(
+    (v) => v.chainId === chainId
+  );
+
+  if (savedVaults.length > 0) {
+    const { useSaved } = await inquirer.prompt([
+      {
+        type: "confirm",
+        name: "useSaved",
+        message: "Do you want to use a saved vault?",
+        default: true,
+      },
+    ]);
+
+    if (useSaved) {
+      const { vault } = await inquirer.prompt([
+        {
+          type: "list",
+          name: "vault",
+          message,
+          choices: savedVaults.map((v) => ({
+            name: v.label
+              ? `${v.name} (${v.label}) - ${v.address}`
+              : `${v.name} - ${v.address}`,
+            value: v.address,
+          })),
+        },
+      ]);
+
+      return vault as Address;
+    }
+  }
+
+  // If no saved vaults or user chose not to use them
+  const address = await selectAddress(message);
+  await promptToSaveVault(client, address, chainId);
+  return address;
 }

@@ -3,7 +3,7 @@ import { type RegistryEntry } from "../../registry";
 import { logger } from "../../utils/logger";
 import { setFee, type FeeData } from "../../vault/fee";
 import { getCurrentVaultState, type CurrentVaultState } from "../../vault/read";
-import { selectAddress } from "../select";
+import { selectAddress, selectVault } from "../select";
 import type { Address, PublicClient, WalletClient, Client } from "viem";
 import { FEE_PRECISION } from "../../utils/constants";
 import {
@@ -426,7 +426,7 @@ export async function editVault(
   walletClient: WalletClient,
   registry: RegistryEntry
 ) {
-  const vault = await selectAddress("Enter the vault address");
+  const vault = await selectVault(publicClient, registry.chain.id);
 
   const { action } = await inquirer.prompt([
     {

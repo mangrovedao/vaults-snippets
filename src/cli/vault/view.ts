@@ -2,7 +2,7 @@ import { getCurrentVaultState } from "../../vault/read";
 import { FundsState } from "../../vault/position";
 import type { PublicClient } from "viem";
 import type { RegistryEntry } from "../../registry";
-import { selectAddress } from "../select";
+import { selectAddress, selectVault } from "../select";
 import { formatUnits } from "viem";
 import { logger } from "../../utils/logger";
 import chalk from "chalk";
@@ -11,7 +11,7 @@ export async function viewVault(
   publicClient: PublicClient,
   registry: RegistryEntry
 ) {
-  const vault = await selectAddress("Enter the vault address");
+  const vault = await selectVault(publicClient, registry.chain.id);
   const data = await getCurrentVaultState(
     publicClient,
     vault,
