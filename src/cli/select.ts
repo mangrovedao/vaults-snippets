@@ -1,3 +1,12 @@
+/**
+ * CLI Selection Module
+ *
+ * This module provides various selection utilities for the CLI interface,
+ * including selecting actions, markets, addresses, numerical values, and vaults.
+ * It also handles saving and loading vault information for user convenience.
+ *
+ * @module cli/select
+ */
 import inquirer from "inquirer";
 import {
   erc20Abi,
@@ -12,9 +21,11 @@ import { getOpenMarkets } from "@mangrovedao/mgv/actions";
 import type { MarketParams } from "@mangrovedao/mgv";
 import { z } from "zod";
 import { logger } from "../utils/logger";
-import { getCurrentVaultState } from "../vault/read";
 import { readContract } from "viem/actions";
 
+/**
+ * Enumeration of possible actions that can be performed through the CLI
+ */
 export enum PossibleActions {
   CREATE_VAULT_FROM_ORACLE = "Create vault from oracle",
   CREATE_VAULT_FROM_SCRATCH = "Create vault from scratch",
@@ -23,8 +34,14 @@ export enum PossibleActions {
   EDIT_VAULT = "Edit vault",
   ADD_LIQUIDITY = "Add liquidity",
   REMOVE_LIQUIDITY = "Remove liquidity",
+  REBALANCE = "Rebalance",
 }
 
+/**
+ * Prompts the user to select an action from the available options
+ *
+ * @returns The selected action
+ */
 export async function selectAction() {
   const { action } = (await inquirer.prompt([
     {
@@ -37,6 +54,15 @@ export async function selectAction() {
   return action;
 }
 
+/**
+ * Prompts the user to select a market from the available options on Mangrove
+ *
+ * Fetches open markets from the Mangrove protocol and presents them to the user for selection.
+ *
+ * @param client - The blockchain client
+ * @param registry - The blockchain registry entry
+ * @returns The selected market parameters
+ */
 export async function selectMarket(client: Client, registry: RegistryEntry) {
   const markets = await getOpenMarkets(client, registry.mangrove, {
     cashnesses: {
@@ -68,6 +94,15 @@ export async function selectMarket(client: Client, registry: RegistryEntry) {
   return market;
 }
 
+/**
+ * Prompts the user to enter an Ethereum address
+ *
+ * Validates that the input is a valid Ethereum address.
+ *
+ * @param message - The prompt message (default: "Enter an address")
+ * @param defaultValue - Optional default address value
+ * @returns The entered or selected address
+ */
 export async function selectAddress(
   message: string = "Enter an address",
   defaultValue?: Address
@@ -89,10 +124,22 @@ export async function selectAddress(
   return address;
 }
 
+/**
+ * Prompts the user to enter a number with decimal precision
+ *
+ * Handles conversion between the decimal representation and the bigint value
+ * with the appropriate number of decimals.
+ *
+ * @param decimals - The number of decimal places
+ * @param message - The prompt message (default: "Enter a value (in decimal)")
+ * @param defaultValue - Optional default value
+ * @returns The entered value as a bigint
+ */
 export async function selectNumberWithDecimals(
   decimals: number,
   message: string = "Enter a value (in decimal)",
-  defaultValue: bigint = 0n
+  defaultValue: bigint = 0n,
+  maxValue?: bigint
 ) {
   const { number } = (await inquirer.prompt({
     type: "input",
@@ -103,6 +150,11 @@ export async function selectNumberWithDecimals(
       if (value === undefined) return "Please enter a value";
       const number = parseUnits(value, decimals);
       if (number < 0n) return "Please enter a positive number";
+      if (maxValue && number > maxValue)
+        return `Please enter a value less than ${formatUnits(
+          maxValue,
+          decimals
+        )}`;
       return true;
     },
     filter: (value: string) => parseUnits(value, decimals),
@@ -122,11 +174,23 @@ const SaveFileSchema = z.object({
   vaults: z.array(SavedVaultV1Schema),
 });
 
+/**
+ * Schema for the saved vault file
+ */
 type SaveFile = z.infer<typeof SaveFileSchema>;
+
+/**
+ * Schema for a saved vault entry
+ */
 type SavedVault = z.infer<typeof SavedVaultV1Schema>;
 
 const SAVE_FILE = ".save/vaults.json";
 
+/**
+ * Loads previously saved vaults from storage
+ *
+ * @returns The saved vault information
+ */
 async function loadSavedVaults(): Promise<SaveFile> {
   const file = Bun.file(SAVE_FILE);
   if (!(await file.exists())) {
@@ -147,12 +211,27 @@ async function loadSavedVaults(): Promise<SaveFile> {
   return result.data;
 }
 
+/**
+ * Saves a vault to storage for future reference
+ *
+ * @param vault - The vault information to save
+ */
 async function saveVault(vault: SavedVault) {
   const currentContent = await loadSavedVaults();
   currentContent.vaults.push(vault);
   await Bun.write(SAVE_FILE, JSON.stringify(currentContent, null, 2));
 }
 
+/**
+ * Prompts the user to save a vault for future reference
+ *
+ * Fetches the vault's name and symbol from the blockchain and saves it along with the address.
+ *
+ * @param client - The blockchain client
+ * @param address - The address of the vault
+ * @param chainId - The ID of the blockchain network
+ * @returns Whether the vault was saved
+ */
 export async function promptToSaveVault(
   client: Client,
   address: Address,
@@ -197,6 +276,16 @@ export async function promptToSaveVault(
   }
 }
 
+/**
+ * Prompts the user to select a vault from previously saved vaults
+ *
+ * If no vaults have been saved on the selected chain, allows entering a vault address directly.
+ *
+ * @param client - The blockchain client
+ * @param chainId - The ID of the blockchain network
+ * @param message - The prompt message (default: "Select a vault")
+ * @returns The address of the selected vault
+ */
 export async function selectVault(
   client: Client,
   chainId: number,

@@ -1,3 +1,12 @@
+/**
+ * Main CLI entry point for the Mangrove Vaults Tool.
+ *
+ * This file serves as the application entry point that provides a command-line interface
+ * for interacting with Mangrove Vaults, including creating, viewing, and managing vaults
+ * and their associated oracles.
+ *
+ * @module cli
+ */
 import { createPublicClient, createWalletClient, http, type Hex } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
 import { logger } from "../utils/logger";
@@ -9,7 +18,19 @@ import { editVault } from "./vault/edit";
 import { addLiquidity } from "./vault/add-liquidity";
 import { removeLiquidity } from "./vault/remove-liquidity";
 import { deployOracleForm } from "./oracle";
+import { rebalanceForm } from "./rebalance.ts";
 
+/**
+ * Main function that serves as the entry point for the CLI application.
+ *
+ * This function performs the following steps:
+ * 1. Sets up the account using the private key from environment variables
+ * 2. Prompts the user to select a blockchain to work with
+ * 3. Prompts the user to select an action to perform
+ * 4. Creates the necessary clients and executes the selected action
+ *
+ * @returns A promise that resolves when the application completes
+ */
 async function main() {
   const account = privateKeyToAccount(process.env.PRIVATE_KEY! as Hex);
   logger.info(`Using account ${account.address}`);
@@ -56,7 +77,16 @@ async function main() {
       break;
     case PossibleActions.DEPLOY_ORACLE:
       const market = await selectMarket(publicClient, chain);
-      await deployOracleForm(walletClient, chain, market.base, market.quote, account.address);
+      await deployOracleForm(
+        walletClient,
+        chain,
+        market.base,
+        market.quote,
+        account.address
+      );
+      break;
+    case PossibleActions.REBALANCE:
+      await rebalanceForm(walletClient, chain, account.address);
       break;
   }
 }

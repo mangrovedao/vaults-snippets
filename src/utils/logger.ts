@@ -1,3 +1,11 @@
+/**
+ * Logger Utility Module
+ * 
+ * This module provides logging functionality for the CLI application,
+ * including transaction handling, data formatting, and console output utilities.
+ * 
+ * @module utils/logger
+ */
 import ora from "ora";
 import pino from "pino";
 import {
@@ -24,6 +32,14 @@ import type { FeeData } from "../vault/fee";
 //   },
 // });
 
+/**
+ * Configuration for transaction messages
+ * 
+ * @property header - Optional message to display before the transaction is sent
+ * @property label - Optional label for the transaction (default: "Transaction")
+ * @property success - Optional message or function to generate a message on success
+ * @property failure - Optional message or function to generate a message on failure
+ */
 export type TransactionMessages = {
   header?: string;
   label?: string;
@@ -31,13 +47,51 @@ export type TransactionMessages = {
   failure?: string | ((hash: Hex) => string);
 };
 
+/**
+ * Logger object providing various logging and transaction handling utilities
+ */
 export const logger = {
+  /**
+   * Logs informational messages
+   */
   info: console.log,
+  
+  /**
+   * Logs error messages
+   */
   error: console.error,
+  
+  /**
+   * Logs warning messages
+   */
   warn: console.warn,
+  
+  /**
+   * Logs debug messages
+   */
   debug: console.debug,
+  
+  /**
+   * Logs stack traces
+   */
   trace: console.trace,
+  
+  /**
+   * Logs data in tabular format
+   */
   table: console.table,
+  
+  /**
+   * Handles blockchain transaction requests with visual feedback
+   * 
+   * Displays a spinner while the transaction is pending and appropriate
+   * success or failure messages once the transaction is confirmed.
+   * 
+   * @param request - The transaction request parameters
+   * @param client - The blockchain client
+   * @param messages - Optional configuration for transaction messages
+   * @returns The transaction receipt
+   */
   handleRequest: async (
     request: WriteContractParameters,
     client: Client,
@@ -70,6 +124,12 @@ export const logger = {
     }
     return receipt;
   },
+  
+  /**
+   * Logs vault position parameters in a formatted table
+   * 
+   * @param params - The position parameters to log
+   */
   logParams: (params: Params) => {
     logger.table({
       "gas price": `${formatEther(BigInt(params.gasprice), "gwei")} Gwei ${
@@ -80,6 +140,12 @@ export const logger = {
       "price points": params.pricePoints,
     });
   },
+  
+  /**
+   * Logs the funds state of a vault position
+   * 
+   * @param fundsState - The funds state to log
+   */
   logFundState: (fundsState: FundsState) => {
     const fundStateLabel =
       fundsState === FundsState.Active
@@ -89,6 +155,13 @@ export const logger = {
         : "Funds are in the vault";
     logger.info(fundStateLabel);
   },
+  
+  /**
+   * Logs detailed information about a vault position
+   * 
+   * @param position - The position data to log
+   * @param market - Optional market parameters for price formatting
+   */
   logPosition: (position: PositionData, market?: MarketParams) => {
     logger.info(chalk.bold("Position details:"));
     logger.logParams(position.params);
@@ -112,6 +185,12 @@ export const logger = {
     const label = market ? "price points" : "ticks";
     logger.table(pricePoints.map((p) => ({ [label]: p })));
   },
+  
+  /**
+   * Logs fee information for a vault
+   * 
+   * @param fees - The fee data to log
+   */
   logFees: (fees: FeeData) => {
     logger.info(chalk.bold("Fees:"));
     logger.table({

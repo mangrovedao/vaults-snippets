@@ -1,3 +1,11 @@
+/**
+ * Vault Read Operations Module
+ * 
+ * This module provides functions for reading data from Mangrove Vaults,
+ * including current state, balances, positions, and other information.
+ * 
+ * @module vault/read
+ */
 import {
   kandelActions,
   type GetKandelStateResult,
@@ -12,11 +20,32 @@ import { MangroveVaultAbi } from "../../abis/MangroveVault";
 import { getPrice } from "../oracle/read";
 import { FEE_PRECISION } from "../utils/constants";
 
+/**
+ * Represents token balances for base and quote tokens
+ * 
+ * @property base - The base token balance
+ * @property quote - The quote token balance
+ */
 type Balance = {
   base: bigint;
   quote: bigint;
 };
 
+/**
+ * Comprehensive representation of a vault's current state
+ * 
+ * @property feeData - Fee configuration data
+ * @property position - Position data including parameters and state
+ * @property kandelBalance - Token balances held by the kandel strategy
+ * @property vaultBalance - Token balances held by the vault
+ * @property market - Market parameters
+ * @property oracle - Address of the price oracle
+ * @property currentPrice - Current price from the oracle
+ * @property currentTick - Current tick corresponding to the price
+ * @property owner - Address of the vault owner
+ * @property kandel - Address of the kandel strategy contract
+ * @property kandelState - Detailed state of the kandel strategy
+ */
 export type CurrentVaultState = {
   feeData: FeeData;
   position: PositionData;
@@ -31,6 +60,16 @@ export type CurrentVaultState = {
   kandelState: GetKandelStateResult;
 };
 
+/**
+ * Retrieves the current state of a Mangrove Vault
+ * 
+ * Performs a multicall to efficiently fetch all relevant data from the vault and related contracts.
+ * 
+ * @param client - The blockchain client
+ * @param vault - The address of the vault
+ * @param mangroveParams - Mangrove protocol parameters
+ * @returns The current state of the vault
+ */
 export async function getCurrentVaultState(
   client: Client,
   vault: Address,

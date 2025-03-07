@@ -2,14 +2,19 @@ import inquirer from "inquirer";
 import {
   encodePacked,
   padHex,
-  zeroAddress,
-  type Address,
   type Hex,
 } from "viem";
 import { selectAddress } from "../../select";
 import type { DiaFeed } from "../../../oracle/dia/v1";
 import type { Token } from "@mangrovedao/mgv";
 
+/**
+ * Prompts the user to select a market key for DIA oracle
+ * 
+ * @param message - The prompt message to display
+ * @param defaultValue - Default value for the key
+ * @returns The selected key
+ */
 export async function selectKey(
   message: string = "Select a market key",
   defaultValue: string = ""
@@ -37,6 +42,12 @@ export async function selectKey(
   return key;
 }
 
+/**
+ * Prompts the user to select a DIA feed configuration
+ * 
+ * @param message - The prompt message to display
+ * @returns The selected DIA feed configuration without decimals
+ */
 export async function selectDiaFeed(
   message: string = "Choose a dia feed"
 ): Promise<Omit<DiaFeed, "baseDecimals" | "quoteDecimals">> {
@@ -57,6 +68,18 @@ export async function selectDiaFeed(
   };
 }
 
+/**
+ * Prompts the user to select DIA feeds for a token pair
+ * 
+ * This function guides the user through selecting up to two feeds each for
+ * the base and quote tokens, configuring the appropriate decimal precision
+ * for each feed in the chain.
+ * 
+ * @param base - The base token
+ * @param quote - The quote token
+ * @param intermediaryDecimals - Decimal precision for intermediary calculations (default: 18)
+ * @returns Configuration object with the selected DIA feeds
+ */
 export async function selectDiaFeeds(
   base: Token,
   quote: Token,
