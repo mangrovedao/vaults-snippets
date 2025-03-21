@@ -80,6 +80,11 @@ export const logger = {
    * Logs data in tabular format
    */
   table: console.table,
+
+  /**
+   * Clears the console
+   */
+  clear: console.clear,
   
   /**
    * Handles blockchain transaction requests with visual feedback

@@ -225,6 +225,7 @@ export async function deployDiaV1Oracle(
       args
     );
     if (oracleAddress?.deployed) {
+      logger.info(`Oracle already deployed at ${oracleAddress.address}`);
       return oracleAddress.address;
     }
     const { result: oracle, request: deployOracleRequest } =

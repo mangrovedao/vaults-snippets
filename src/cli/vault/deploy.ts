@@ -1,6 +1,6 @@
 /**
  * Vault Deployment Module
- * 
+ *
  * This module provides functionality for deploying vaults through an interactive CLI.
  * It supports deploying vaults with or without oracle deployment in the same workflow.
  */
@@ -8,6 +8,7 @@ import {
   isAddress,
   type Address,
   type Client,
+  type PrivateKeyAccount,
   type PublicClient,
   type WalletClient,
 } from "viem";
@@ -18,16 +19,17 @@ import { logger } from "../../utils/logger";
 import { deployVault } from "../../vault/factory";
 import { promptToSaveVault, selectAddress, selectMarket } from "../select";
 import { deployOracleForm } from "../oracle";
+import { vaultManagement } from "./management";
 
 /**
  * Deploys a vault with user-selected configuration options
- * 
+ *
  * This function:
  * 1. Prompts the user for vault configuration parameters (seeder, owner, name, symbol, decimals)
  * 2. Confirms the deployment parameters with the user
  * 3. Deploys the vault with the specified parameters
  * 4. Prompts the user to save the vault address
- * 
+ *
  * @param client - The blockchain client
  * @param market - The market parameters for the vault
  * @param registry - The registry entry containing contract addresses and chain information
@@ -153,68 +155,20 @@ export async function deployVaultWithChoices(
     logger.error("Vault deployment failed");
     return false;
   }
-  
+
   // Prompt user to save the vault address
   await promptToSaveVault(client, vault, registry.chain.id);
   return vault;
 }
 
 /**
- * Deploys both an oracle and a vault in a single workflow
- * 
- * This function:
- * 1. Prompts the user to select a market
- * 2. Guides the user through deploying an oracle for the selected market
- * 3. Uses the deployed oracle to deploy a vault for the same market
- * 
- * @param publicClient - The public blockchain client for reading data
- * @param walletClient - The wallet client for signing transactions
- * @param registry - The registry entry containing contract addresses and chain information
- * @param sender - The sender's address
- */
-export async function deployVaultAndOracle(
-  publicClient: PublicClient,
-  walletClient: WalletClient,
-  registry: RegistryEntry,
-  sender: Address
-) {
-  // Select market and deploy oracle
-  const market = await selectMarket(publicClient, registry);
-  const oracle = await deployOracleForm(
-    walletClient,
-    registry,
-    market.base,
-    market.quote,
-    sender
-  );
-  if (!oracle) {
-    logger.error("Oracle deployment failed");
-    return;
-  }
-  
-  // Deploy vault using the newly deployed oracle
-  const vault = await deployVaultWithChoices(
-    walletClient,
-    market,
-    registry,
-    oracle,
-    sender
-  );
-  if (!vault) {
-    logger.error("Vault deployment failed");
-    return;
-  }
-  logger.info(`Vault deployed at ${vault} with oracle ${oracle}`);
-}
-
-/**
  * Deploys a vault using an existing oracle
- * 
+ *
  * This function:
  * 1. Prompts the user to select a market
  * 2. Prompts the user to enter an existing oracle address
  * 3. Deploys a vault for the selected market using the specified oracle
- * 
+ *
  * @param publicClient - The public blockchain client for reading data
  * @param walletClient - The wallet client for signing transactions
  * @param registry - The registry entry containing contract addresses and chain information
@@ -224,23 +178,24 @@ export async function deployVaultOnly(
   publicClient: PublicClient,
   walletClient: WalletClient,
   registry: RegistryEntry,
-  sender: Address
+  account: PrivateKeyAccount
 ) {
   // Select market and existing oracle
   const market = await selectMarket(publicClient, registry);
   const oracle = await selectAddress("Enter the oracle address");
-  
+
   // Deploy vault with the specified oracle
   const vault = await deployVaultWithChoices(
     walletClient,
     market,
     registry,
     oracle,
-    sender
+    account.address
   );
   if (!vault) {
     logger.error("Vault deployment failed");
     return;
   }
   logger.info(`Vault deployed at ${vault} with oracle ${oracle}`);
+  await vaultManagement(publicClient, walletClient, registry, account, vault);
 }

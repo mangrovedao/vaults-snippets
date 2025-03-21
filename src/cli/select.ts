@@ -24,37 +24,6 @@ import { logger } from "../utils/logger";
 import { readContract } from "viem/actions";
 
 /**
- * Enumeration of possible actions that can be performed through the CLI
- */
-export enum PossibleActions {
-  CREATE_VAULT_FROM_ORACLE = "Create vault from oracle",
-  CREATE_VAULT_FROM_SCRATCH = "Create vault from scratch",
-  DEPLOY_ORACLE = "Deploy oracle",
-  VIEW_VAULT = "View vault",
-  EDIT_VAULT = "Edit vault",
-  ADD_LIQUIDITY = "Add liquidity",
-  REMOVE_LIQUIDITY = "Remove liquidity",
-  REBALANCE = "Rebalance",
-}
-
-/**
- * Prompts the user to select an action from the available options
- *
- * @returns The selected action
- */
-export async function selectAction() {
-  const { action } = (await inquirer.prompt([
-    {
-      type: "list",
-      choices: Object.values(PossibleActions),
-      message: "Select an action",
-      name: "action",
-    },
-  ])) as { action: PossibleActions };
-  return action;
-}
-
-/**
  * Prompts the user to select a market from the available options on Mangrove
  *
  * Fetches open markets from the Mangrove protocol and presents them to the user for selection.
@@ -328,4 +297,19 @@ export async function selectVault(
   const address = await selectAddress(message);
   await promptToSaveVault(client, address, chainId);
   return address;
+}
+
+export async function selectFromEnum<TChoices extends string>(
+  message: string,
+  choices: Record<string, TChoices>
+) {
+  const { choice } = await inquirer.prompt([
+    {
+      type: "list",
+      name: "choice",
+      message,
+      choices: Object.values(choices),
+    },
+  ]);
+  return choice as TChoices;
 }

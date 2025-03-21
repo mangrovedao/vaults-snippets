@@ -31,7 +31,7 @@ import { getKandelPositionRawParams, type MarketParams } from "@mangrovedao/mgv"
  * @param vault - The address of the vault to edit
  * @param currentFee - The current fee configuration of the vault
  */
-async function editFee(
+export async function editFee(
   client: WalletClient,
   vault: Address,
   currentFee: FeeData
@@ -154,7 +154,7 @@ async function editFee(
  * @param vault - The address of the vault to edit
  * @param currentPosition - The current position configuration of the vault
  */
-async function editPosition(
+export async function editPosition(
   client: WalletClient,
   vault: Address,
   currentPosition: PositionData
@@ -353,7 +353,7 @@ async function editPosition(
  * @param vault - The address of the vault to edit
  * @param state - The current state of the vault including price information
  */
-async function editPriceRange(
+export async function editPriceRange(
   client: WalletClient,
   vault: Address,
   state: CurrentVaultState

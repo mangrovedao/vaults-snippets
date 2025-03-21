@@ -4,15 +4,15 @@
  * This module provides functionality for viewing detailed information about vaults through an interactive CLI.
  * It displays market data, fee structures, position parameters, balances, and offer information.
  */
-import { getCurrentVaultState } from "../../vault/read";
-import { FundsState } from "../../vault/position";
-import type { PublicClient } from "viem";
+import { getCurrentVaultState, type CurrentVaultState } from "../../vault/read";
+import type { Address, PublicClient } from "viem";
 import type { RegistryEntry } from "../../registry";
-import { selectAddress, selectVault } from "../select";
+import { selectVault } from "../select";
 import { formatUnits } from "viem";
 import { logger } from "../../utils/logger";
 import chalk from "chalk";
-
+import readline from "readline/promises";
+import readlineSync from "readline";
 /**
  * Displays comprehensive information about a selected vault
  * 
@@ -30,23 +30,39 @@ import chalk from "chalk";
  * 
  * @param publicClient - The public blockchain client for reading data
  * @param registry - The registry entry containing contract addresses and chain information
+ * @param vault - The address of the vault to view
  */
 export async function viewVault(
   publicClient: PublicClient,
-  registry: RegistryEntry
+  registry: RegistryEntry,
+  vault?: Address,
+  vaultState?: CurrentVaultState
 ) {
   // Select the vault to view
-  const vault = await selectVault(publicClient, registry.chain.id);
+  if (!vault) {
+    vault = await selectVault(publicClient, registry.chain.id);
+  }
   
   // Fetch current state data for the selected vault
-  const data = await getCurrentVaultState(
+  const data = vaultState ?? await getCurrentVaultState(
     publicClient,
     vault,
     registry.mangrove
   );
+
+  // Save the current cursor position
+  // process.stdout.write('\u001b[s');
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  const initPos = rl.getCursorPos();
+
+
+  // start logging info
   
   // Display market information
-  console.log(
+  logger.info(
     `Market : ${data.market.base.symbol}/${data.market.quote.symbol} (tickSpacing: ${data.market.tickSpacing})`
   );
   
@@ -57,8 +73,8 @@ export async function viewVault(
   logger.logPosition(data.position, data.market);
   
   // Display token balances for both Kandel strategy and vault
-  console.log("Balances :");
-  console.table({
+  logger.info("Balances :");
+  logger.table({
     kandel: {
       base: `${formatUnits(
         data.kandelBalance.base,
@@ -82,8 +98,8 @@ export async function viewVault(
   });
   
   // Display contract addresses
-  console.log("Addresses :");
-  console.table({
+  logger.info("Addresses :");
+  logger.table({
     oracle: data.oracle,
     owner: data.owner,
     kandel: data.kandel,
@@ -91,13 +107,13 @@ export async function viewVault(
   });
   
   // Display current market price and tick
-  console.log(
+  logger.info(
     `Current price : ${data.currentPrice} (tick: ${data.currentTick})`
   );
   
   // Display Kandel strategy state
-  console.log(chalk.bold("position from kandel contract :"));
-  console.table({
+  logger.info(chalk.bold("position from kandel contract :"));
+  logger.table({
     ...data.kandelState,
     asks: data.kandelState.asks.length,
     bids: data.kandelState.bids.length,
@@ -105,6 +121,16 @@ export async function viewVault(
   
   // Display active offers if any exist
   if (data.kandelState.asks.length > 0 || data.kandelState.bids.length > 0) {
-    console.table([...data.kandelState.asks, ...data.kandelState.bids]);
+    logger.table([...data.kandelState.asks, ...data.kandelState.bids]);
   }
+
+
+  await rl.question("\nPress any key to continue...");
+
+  // Restore cursor to saved position and clear everything below it
+  // process.stdout.write('\u001b[u\u001b[J');
+
+  await new Promise((resolve) => readlineSync.cursorTo(process.stdout, initPos.rows, initPos.cols, () => resolve(true)));
+  await new Promise((resolve) => readlineSync.clearScreenDown(process.stdout, () => resolve(true)));
+  rl.close(); // stop listening
 }

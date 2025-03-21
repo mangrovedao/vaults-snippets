@@ -7,7 +7,7 @@
 import type { Address, PublicClient, WalletClient } from "viem";
 import type { RegistryEntry } from "../../registry";
 import { selectAddress, selectVault } from "../select";
-import { getCurrentVaultState } from "../../vault/read";
+import { getCurrentVaultState, type CurrentVaultState } from "../../vault/read";
 import ora from "ora";
 import { getBalancesForMarket } from "../balances";
 import inquirer from "inquirer";
@@ -35,14 +35,18 @@ export async function addLiquidity(
   publicClient: PublicClient,
   walletClient: WalletClient,
   account: Address,
-  registry: RegistryEntry
+  registry: RegistryEntry,
+  vault?: Address,
+  vaultState?: CurrentVaultState
 ) {
   // Select vault to add liquidity to
-  const vault = await selectVault(publicClient, registry.chain.id);
+  if (!vault) {
+    vault = await selectVault(publicClient, registry.chain.id);
+  }
   
   // Fetch vault state and user balances
   const loader = ora("Getting vault state...").start();
-  const vaultData = await getCurrentVaultState(
+  const vaultData = vaultState ?? await getCurrentVaultState(
     publicClient,
     vault,
     registry.mangrove

@@ -10,7 +10,7 @@ import {
   type WalletClient,
 } from "viem";
 import type { RegistryEntry } from "../../registry";
-import { getCurrentVaultState } from "../../vault/read";
+import { getCurrentVaultState, type CurrentVaultState } from "../../vault/read";
 import { getBalanceForToken } from "../balances";
 import { selectAddress, selectVault } from "../select";
 import ora from "ora";
@@ -36,14 +36,18 @@ export async function removeLiquidity(
   publicClient: PublicClient,
   walletClient: WalletClient,
   account: Address,
-  registry: RegistryEntry
+  registry: RegistryEntry,
+  vault?: Address,
+  vaultState?: CurrentVaultState
 ) {
   // Select the vault to remove liquidity from
-  const vault = await selectVault(publicClient, registry.chain.id);
+  if (!vault) {
+    vault = await selectVault(publicClient, registry.chain.id);
+  }
   
   // Show loading spinner while fetching data
   const loader = ora("Getting vault state...").start();
-  const vaultData = await getCurrentVaultState(
+  const vaultData = vaultState ?? await getCurrentVaultState(
     publicClient,
     vault,
     registry.mangrove

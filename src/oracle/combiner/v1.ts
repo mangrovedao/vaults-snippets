@@ -131,6 +131,7 @@ export async function deployCombinerV1Oracle(
 
     // If oracle is already deployed, return its address
     if (oracleAddress?.deployed) {
+      logger.info(`Oracle already deployed at ${oracleAddress.address}`);
       return oracleAddress.address;
     }
 

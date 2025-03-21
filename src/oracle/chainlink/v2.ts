@@ -165,6 +165,7 @@ export async function deployChainlinkV2Oracle(
       args
     );
     if (oracleAddress?.deployed) {
+      logger.info(`Oracle already deployed at ${oracleAddress.address}`);
       return oracleAddress.address;
     }
     const validatedArgs = validateArgs(args);

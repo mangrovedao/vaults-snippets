@@ -12,13 +12,16 @@ import { privateKeyToAccount } from "viem/accounts";
 import { logger } from "../utils/logger";
 import { chooseChain } from "./chain";
 import { registry } from "../registry";
-import { PossibleActions, selectAction, selectMarket } from "./select";
-import { deployVaultAndOracle, deployVaultOnly, viewVault } from "./vault";
-import { editVault } from "./vault/edit";
-import { addLiquidity } from "./vault/add-liquidity";
-import { removeLiquidity } from "./vault/remove-liquidity";
+import { selectFromEnum } from "./select";
+import { deployVaultOnly, vaultManagement } from "./vault";
 import { deployOracleForm } from "./oracle";
-import { rebalanceForm } from "./rebalance.ts";
+
+const MainMenuActions = {
+  VAULT_MANAGEMENT: "Vault Management",
+  CREATE_VAULT: "Create Vault",
+  CREATE_ORACLE: "Create Oracle",
+  EXIT: "Exit",
+} as const;
 
 /**
  * Main function that serves as the entry point for the CLI application.
@@ -38,7 +41,10 @@ async function main() {
   await new Promise((resolve) => setTimeout(resolve, 50));
 
   const chain = await chooseChain(registry);
-  const action = await selectAction();
+  const action = await selectFromEnum(
+    "What do you want to do?",
+    MainMenuActions
+  );
 
   const publicClient = createPublicClient({
     chain: chain.chain,
@@ -51,43 +57,24 @@ async function main() {
     transport: http(),
   });
 
-  switch (action) {
-    case PossibleActions.CREATE_VAULT_FROM_ORACLE:
-      await deployVaultOnly(publicClient, walletClient, chain, account.address);
-      break;
-    case PossibleActions.CREATE_VAULT_FROM_SCRATCH:
-      await deployVaultAndOracle(
-        publicClient,
-        walletClient,
-        chain,
-        account.address
-      );
-      break;
-    case PossibleActions.VIEW_VAULT:
-      await viewVault(publicClient, chain);
-      break;
-    case PossibleActions.EDIT_VAULT:
-      await editVault(publicClient, walletClient, chain);
-      break;
-    case PossibleActions.ADD_LIQUIDITY:
-      await addLiquidity(publicClient, walletClient, account.address, chain);
-      break;
-    case PossibleActions.REMOVE_LIQUIDITY:
-      await removeLiquidity(publicClient, walletClient, account.address, chain);
-      break;
-    case PossibleActions.DEPLOY_ORACLE:
-      const market = await selectMarket(publicClient, chain);
-      await deployOracleForm(
-        walletClient,
-        chain,
-        market.base,
-        market.quote,
-        account.address
-      );
-      break;
-    case PossibleActions.REBALANCE:
-      await rebalanceForm(walletClient, chain, account.address);
-      break;
+  while (true) {
+    switch (action) {
+      case MainMenuActions.VAULT_MANAGEMENT:
+        await vaultManagement(publicClient, walletClient, chain, account);
+        break;
+      case MainMenuActions.CREATE_VAULT:
+        await deployVaultOnly(publicClient, walletClient, chain, account);
+        break;
+      case MainMenuActions.CREATE_ORACLE:
+        await deployOracleForm(publicClient, chain, account.address);
+        break;
+      case MainMenuActions.EXIT:
+        logger.info("Exiting...");
+        process.exit(0);
+      default:
+        logger.error("Invalid action");
+        break;
+    }
   }
 }
 

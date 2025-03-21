@@ -1,7 +1,7 @@
 import type { Address, Client } from "viem";
 import type { RegistryEntry } from "../../registry";
 import { selectVault } from "../select";
-import { getCurrentVaultState } from "../../vault/read";
+import { getCurrentVaultState, type CurrentVaultState } from "../../vault/read";
 import inquirer from "inquirer";
 import { logger } from "../../utils/logger";
 import { rebalanceOdos } from "./odos";
@@ -10,10 +10,20 @@ export enum RebalanceType {
   ODOS = "Odos protocol",
 }
 
-export async function rebalanceForm(client: Client, registry: RegistryEntry, sender: Address) {
-  const vault = await selectVault(client, registry.chain.id);
+export async function rebalanceForm(
+  client: Client,
+  registry: RegistryEntry,
+  sender: Address,
+  vault?: Address,
+  vaultState?: CurrentVaultState
+) {
+  if (!vault) {
+    vault = await selectVault(client, registry.chain.id);
+  }
 
-  const statePromise = getCurrentVaultState(client, vault, registry.mangrove);
+  const statePromise = vaultState
+    ? Promise.resolve(vaultState)
+    : getCurrentVaultState(client, vault, registry.mangrove);
 
   // Prompt the user to select the rebalance type
   const { rebalanceType } = (await inquirer.prompt([
@@ -26,7 +36,9 @@ export async function rebalanceForm(client: Client, registry: RegistryEntry, sen
         value,
       })),
     },
-  ])) as { rebalanceType: (typeof registry.rebalance)[keyof typeof registry.rebalance] };
+  ])) as {
+    rebalanceType: (typeof registry.rebalance)[keyof typeof registry.rebalance];
+  };
   const state = await statePromise;
 
   console.log(rebalanceType);
@@ -35,7 +47,14 @@ export async function rebalanceForm(client: Client, registry: RegistryEntry, sen
   switch (rebalanceType.type) {
     case "odos":
       // Handle Odos rebalance flow
-      return await rebalanceOdos(client, vault, state, rebalanceType, registry, sender);
+      return await rebalanceOdos(
+        client,
+        vault,
+        state,
+        rebalanceType,
+        registry,
+        sender
+      );
     default:
       logger.error("Unsupported rebalance type selected");
       return false;

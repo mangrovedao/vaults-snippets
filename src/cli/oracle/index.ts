@@ -9,12 +9,12 @@
  */
 import { type Client, type Address } from "viem";
 import type { OracleFactory, RegistryEntry } from "../../registry";
-import type { Token } from "@mangrovedao/mgv";
 import inquirer from "inquirer";
 import { deployChainlinkV1OracleForm } from "./chainlink/v1";
 import { deployChainlinkV2OracleForm } from "./chainlink/v2";
 import { deployDiaV1OracleForm } from "./dia/v1";
 import { deployCombinerV1OracleForm } from "./combiner/v1";
+import { selectMarket } from "../select";
 
 /**
  * Prompts the user to select an oracle factory from the available options
@@ -48,26 +48,23 @@ async function chooseOracleFactory(
  * 
  * @param client - The blockchain client
  * @param registry - The blockchain registry entry
- * @param base - The base token
- * @param quote - The quote token
  * @param sender - The sender's address
  * @returns The address of the deployed oracle, or false if deployment failed or was cancelled
  */
 export async function deployOracleForm(
   client: Client,
   registry: RegistryEntry,
-  base: Token,
-  quote: Token,
   sender: Address
 ) {
+  const market = await selectMarket(client, registry);
   const factory = await chooseOracleFactory(registry);
   switch (factory.type) {
     case "chainlinkv1":
-      return deployChainlinkV1OracleForm(client, base, quote, factory.oracleFactory, sender, registry.chainlinkMetadataLink);
+      return deployChainlinkV1OracleForm(client, market.base, market.quote, factory.oracleFactory, sender, registry.chainlinkMetadataLink);
     case "chainlinkv2":
-      return deployChainlinkV2OracleForm(client, base, quote, factory.oracleFactory, registry.chainlinkMetadataLink);
+      return deployChainlinkV2OracleForm(client, market.base, market.quote, factory.oracleFactory, registry.chainlinkMetadataLink);
     case "diav1":
-      return deployDiaV1OracleForm(client, base, quote, factory.oracleFactory);
+      return deployDiaV1OracleForm(client, market.base, market.quote, factory.oracleFactory);
     case "combinerv1":
       return deployCombinerV1OracleForm(client, factory.oracleFactory);
   }
