@@ -66,7 +66,7 @@ async function main() {
         await deployVaultOnly(publicClient, walletClient, chain, account);
         break;
       case MainMenuActions.CREATE_ORACLE:
-        await deployOracleForm(publicClient, chain, account.address);
+        await deployOracleForm(walletClient, chain, account.address);
         break;
       case MainMenuActions.EXIT:
         logger.info("Exiting...");
