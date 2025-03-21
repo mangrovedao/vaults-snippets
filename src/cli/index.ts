@@ -41,10 +41,6 @@ async function main() {
   await new Promise((resolve) => setTimeout(resolve, 50));
 
   const chain = await chooseChain(registry);
-  const action = await selectFromEnum(
-    "What do you want to do?",
-    MainMenuActions
-  );
 
   const publicClient = createPublicClient({
     chain: chain.chain,
@@ -58,6 +54,10 @@ async function main() {
   });
 
   while (true) {
+    const action = await selectFromEnum(
+      "What do you want to do?",
+      MainMenuActions
+    );
     switch (action) {
       case MainMenuActions.VAULT_MANAGEMENT:
         await vaultManagement(publicClient, walletClient, chain, account);
