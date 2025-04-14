@@ -136,6 +136,7 @@ const SavedVaultV1Schema = z.object({
   name: z.string(),
   chainId: z.number(),
   label: z.string().optional(),
+  vaultType: z.enum(["simple", "erc4626"]).default("simple"),
 });
 
 const SaveFileSchema = z.object({
@@ -151,7 +152,7 @@ type SaveFile = z.infer<typeof SaveFileSchema>;
 /**
  * Schema for a saved vault entry
  */
-type SavedVault = z.infer<typeof SavedVaultV1Schema>;
+export type SavedVault = z.infer<typeof SavedVaultV1Schema>;
 
 const SAVE_FILE = ".save/vaults.json";
 
@@ -204,8 +205,9 @@ async function saveVault(vault: SavedVault) {
 export async function promptToSaveVault(
   client: Client,
   address: Address,
-  chainId: number
-) {
+  chainId: number,
+  _vaultType?: SavedVault["vaultType"]
+): Promise<SavedVault | undefined> {
   const { shouldSave } = await inquirer.prompt([
     {
       type: "confirm",
@@ -215,6 +217,31 @@ export async function promptToSaveVault(
     },
   ]);
 
+  if (_vaultType === undefined) {
+    const { vaultType } = await inquirer.prompt([
+      {
+        type: "list",
+        name: "vaultType",
+        message: "Select the type of vault:",
+        choices: ["simple", "erc4626"],
+        default: "simple",
+      },
+    ]);
+    _vaultType = vaultType;
+  }
+
+  if (!_vaultType) {
+    logger.error("Vault type is required");
+    return undefined;
+  }
+
+  let vault: SavedVault = {
+    address,
+    chainId,
+    name: "",
+    vaultType: _vaultType,
+  };
+
   if (shouldSave) {
     try {
       const vaultNamePromise = readContract(client, {
@@ -222,27 +249,30 @@ export async function promptToSaveVault(
         abi: erc20Abi,
         functionName: "name",
       });
-      const { label } = await inquirer.prompt([
+      const { label } = (await inquirer.prompt([
         {
           type: "input",
           name: "label",
           message: "Enter an optional label for this vault:",
         },
-      ]);
+      ])) as { label: string };
       const vaultName = await vaultNamePromise;
 
       const savedVault: SavedVault = {
         address,
         name: vaultName,
         chainId,
+        vaultType: _vaultType,
         ...(label ? { label } : {}),
       };
+      vault = savedVault;
 
       await saveVault(savedVault);
     } catch (error) {
       logger.error("Failed to save vault:", error);
     }
   }
+  return vault;
 }
 
 /**
@@ -284,19 +314,19 @@ export async function selectVault(
             name: v.label
               ? `${v.name} (${v.label}) - ${v.address}`
               : `${v.name} - ${v.address}`,
-            value: v.address,
+            value: v,
           })),
         },
       ]);
 
-      return vault as Address;
+      return vault as SavedVault;
     }
   }
 
   // If no saved vaults or user chose not to use them
   const address = await selectAddress(message);
-  await promptToSaveVault(client, address, chainId);
-  return address;
+  const vault = await promptToSaveVault(client, address, chainId);
+  return vault;
 }
 
 export async function selectFromEnum<TChoices extends string>(

@@ -9,7 +9,7 @@ import { type RegistryEntry } from "../../registry";
 import { logger } from "../../utils/logger";
 import { setFee, type FeeData } from "../../vault/fee";
 import { getCurrentVaultState, type CurrentVaultState } from "../../vault/read";
-import { selectAddress, selectVault } from "../select";
+import { selectAddress, selectVault, type SavedVault } from "../select";
 import type { Address, PublicClient, WalletClient, Client } from "viem";
 import { FEE_PRECISION } from "../../utils/constants";
 import {
@@ -33,7 +33,7 @@ import { getKandelPositionRawParams, type MarketParams } from "@mangrovedao/mgv"
  */
 export async function editFee(
   client: WalletClient,
-  vault: Address,
+  vault: SavedVault,
   currentFee: FeeData
 ) {
   while (true) {
@@ -133,7 +133,7 @@ export async function editFee(
     }
 
     // Submit fee changes to the blockchain
-    const success = await setFee(client, vault, newFeeData);
+    const success = await setFee(client, vault.address, newFeeData);
     if (success) {
       break;
     } else {
@@ -156,7 +156,7 @@ export async function editFee(
  */
 export async function editPosition(
   client: WalletClient,
-  vault: Address,
+  vault: SavedVault,
   currentPosition: PositionData
 ) {
   while (true) {
@@ -318,7 +318,7 @@ export async function editPosition(
     if (confirm) {
       try {
         // Submit position changes to the blockchain
-        await setPosition(client, vault, newPosition);
+        await setPosition(client, vault.address, newPosition);
         logger.info("Position updated successfully");
         return;
       } catch (e) {
@@ -355,7 +355,7 @@ export async function editPosition(
  */
 export async function editPriceRange(
   client: WalletClient,
-  vault: Address,
+  vault: SavedVault,
   state: CurrentVaultState
 ) {
   const { currentPrice } = state;
@@ -452,7 +452,7 @@ export async function editPriceRange(
     if (confirm) {
       try {
         // Submit position changes to the blockchain
-        await setPosition(client, vault, newPosition);
+        await setPosition(client, vault.address, newPosition);
         logger.info("Position updated successfully");
         return;
       } catch (e) {
@@ -510,6 +510,10 @@ export async function editVault(
 ) {
   // Select the vault to edit
   const vault = await selectVault(publicClient, registry.chain.id);
+  if (!vault) {
+    logger.error("No vault selected");
+    return;
+  }
 
   // Prompt for the type of edit to perform
   const { action } = await inquirer.prompt([

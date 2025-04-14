@@ -19,6 +19,7 @@ import { multicall } from "viem/actions";
 import { MangroveVaultAbi } from "../../abis/MangroveVault";
 import { getPrice } from "../oracle/read";
 import { FEE_PRECISION } from "../utils/constants";
+import type { SavedVault } from "../cli/select";
 
 /**
  * Represents token balances for base and quote tokens
@@ -72,7 +73,7 @@ export type CurrentVaultState = {
  */
 export async function getCurrentVaultState(
   client: Client,
-  vault: Address,
+  vault: SavedVault,
   mangroveParams: MangroveActionsDefaultParams
 ): Promise<CurrentVaultState> {
   const [
@@ -90,57 +91,57 @@ export async function getCurrentVaultState(
   ] = await multicall(client, {
     contracts: [
       {
-        address: vault,
+        address: vault.address,
         abi: MangroveVaultAbi,
         functionName: "feeData",
       },
       {
-        address: vault,
+        address: vault.address,
         abi: MangroveVaultAbi,
         functionName: "tickIndex0",
       },
       {
-        address: vault,
+        address: vault.address,
         abi: MangroveVaultAbi,
         functionName: "kandelTickOffset",
       },
       {
-        address: vault,
+        address: vault.address,
         abi: MangroveVaultAbi,
         functionName: "kandelParams",
       },
       {
-        address: vault,
+        address: vault.address,
         abi: MangroveVaultAbi,
         functionName: "fundsState",
       },
       {
-        address: vault,
+        address: vault.address,
         abi: MangroveVaultAbi,
         functionName: "getKandelBalances",
       },
       {
-        address: vault,
+        address: vault.address,
         abi: MangroveVaultAbi,
         functionName: "getVaultBalances",
       },
       {
-        address: vault,
+        address: vault.address,
         abi: MangroveVaultAbi,
         functionName: "market",
       },
       {
-        address: vault,
+        address: vault.address,
         abi: MangroveVaultAbi,
         functionName: "oracle",
       },
       {
-        address: vault,
+        address: vault.address,
         abi: MangroveVaultAbi,
         functionName: "owner",
       },
       {
-        address: vault,
+        address: vault.address,
         abi: MangroveVaultAbi,
         functionName: "kandel",
       },

@@ -84,6 +84,7 @@ export type RegistryEntry = {
   mangrove: MangroveActionsDefaultParams;
   chainlinkMetadataLink: string;
   rebalance: RebalanceEntries;
+  rpcURL: string | undefined;
 };
 
 /**
@@ -125,6 +126,7 @@ export const registry: Array<RegistryEntry> = [
         },
       },
     },
+    rpcURL: process.env.ARBITRUM_RPC_URL,
   },
   {
     chain: base,
@@ -173,5 +175,6 @@ export const registry: Array<RegistryEntry> = [
         },
       },
     },
+    rpcURL: process.env.BASE_RPC_URL,
   },
 ];

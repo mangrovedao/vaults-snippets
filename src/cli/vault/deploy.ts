@@ -18,7 +18,6 @@ import type { MarketParams } from "@mangrovedao/mgv";
 import { logger } from "../../utils/logger";
 import { deployVault } from "../../vault/factory";
 import { promptToSaveVault, selectAddress, selectMarket } from "../select";
-import { deployOracleForm } from "../oracle";
 import { vaultManagement } from "./management";
 
 /**
@@ -44,18 +43,50 @@ export async function deployVaultWithChoices(
   oracle: Address,
   sender: Address
 ) {
+  const { vaultType } = (await inquirer.prompt([
+    {
+      type: "select",
+      message: "Select a vault type",
+      name: "vaultType",
+      choices: ["simple", "erc4626"],
+      default: "simple",
+    },
+  ])) as { vaultType: "simple" | "erc4626" };
+
+  const seeders =
+    vaultType === "simple"
+      ? registry.vault.SIMPLE_VAULTS_SEEDER
+      : registry.vault.ERC4626_VAULT_SEEDERS;
+
+  const factory =
+    vaultType === "simple"
+      ? registry.vault.VAULT_FACTORY
+      : (
+          (await inquirer.prompt([
+            {
+              type: "select",
+              message: "Select a vault factory",
+              name: "factory",
+              choices: Object.keys(registry.vault.ERC4626_VAULT_FACTORIES).map(
+                (factory) => ({
+                  value: registry.vault.ERC4626_VAULT_FACTORIES[factory],
+                  name: factory,
+                })
+              ),
+            },
+          ])) as { factory: Address }
+        ).factory;
+
   // Prompt user for vault configuration parameters
   const { seeder, owner, name, symbol, decimals } = (await inquirer.prompt([
     {
       type: "select",
       message: "Select a seeder to use",
       name: "seeder",
-      choices: Object.keys(registry.vault.SIMPLE_VAULTS_SEEDER).map(
-        (seeder) => ({
-          value: registry.vault.SIMPLE_VAULTS_SEEDER[seeder],
-          name: seeder,
-        })
-      ),
+      choices: Object.keys(seeders).map((seeder) => ({
+        value: seeders[seeder],
+        name: seeder,
+      })),
     },
     {
       type: "input",
@@ -116,6 +147,8 @@ export async function deployVaultWithChoices(
     {
       type: "confirm",
       message: `Deploy vault with the following parameters?
+      Vault Type: ${vaultType}
+      Factory: ${factory}
       Seeder: ${seeder}
       Owner: ${owner}
       Name: ${name}
@@ -137,7 +170,7 @@ export async function deployVaultWithChoices(
   // Deploy the vault with specified parameters
   const vault = await deployVault(
     client,
-    registry.vault.VAULT_FACTORY,
+    factory,
     sender,
     {
       seeder,
@@ -153,12 +186,12 @@ export async function deployVaultWithChoices(
 
   if (!vault) {
     logger.error("Vault deployment failed");
-    return false;
+    return undefined;
   }
 
   // Prompt user to save the vault address
-  await promptToSaveVault(client, vault, registry.chain.id);
-  return vault;
+  const savedVault = await promptToSaveVault(client, vault, registry.chain.id, vaultType);
+  return savedVault;
 }
 
 /**

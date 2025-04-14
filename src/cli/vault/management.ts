@@ -1,6 +1,6 @@
 import type { Address, PrivateKeyAccount, PublicClient, WalletClient } from "viem";
 import type { RegistryEntry } from "../../registry";
-import { selectFromEnum, selectVault } from "../select";
+import { selectFromEnum, selectVault, type SavedVault } from "../select";
 import { viewVault } from "./view";
 import { getCurrentVaultState } from "../../vault/read";
 import ora from "ora";
@@ -26,9 +26,13 @@ export async function vaultManagement(
   walletClient: WalletClient,
   registry: RegistryEntry,
   account: PrivateKeyAccount,
-  _vault?: Address
+  _vault?: SavedVault
 ) {
   const vault = _vault ?? await selectVault(publicClient, registry.chain.id);
+  if (!vault) {
+    logger.error("No vault selected");
+    return;
+  }
   while (true) {
     const vaultStatePromise = getCurrentVaultState(
       publicClient,
