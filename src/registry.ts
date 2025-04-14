@@ -32,12 +32,16 @@ export type OracleFactory = {
  * @property MINT_HELPER - The address of the mint helper contract
  * @property SIMPLE_VAULTS_SEEDER - A map of seeder types to their contract addresses
  * @property ORACLE_FACTORIES - A map of oracle factory names to their configurations
+ * @property ERC4626_VAULT_FACTORIES - A map of vault factory types to their contract addresses
+ * @property ERC4626_VAULT_SEEDERS - A map of vault seeder types to their contract addresses
  */
 type VaultRegistryEntry = {
   VAULT_FACTORY: Address;
   MINT_HELPER: Address;
   SIMPLE_VAULTS_SEEDER: Record<string, Address>;
   ORACLE_FACTORIES: Record<string, OracleFactory>;
+  ERC4626_VAULT_FACTORIES: Record<string, Address>;
+  ERC4626_VAULT_SEEDERS: Record<string, Address>;
 };
 
 /**
@@ -105,6 +109,8 @@ export const registry: Array<RegistryEntry> = [
           type: "chainlinkv1",
         },
       },
+      ERC4626_VAULT_FACTORIES: {},
+      ERC4626_VAULT_SEEDERS: {},
     },
     mangrove: arbitrumMangrove,
     chainlinkMetadataLink:
@@ -124,10 +130,16 @@ export const registry: Array<RegistryEntry> = [
     chain: base,
     vault: {
       VAULT_FACTORY: "0xDA5ECD0eB8F9bA979A51A44a0C9Ab57F928CcE79",
+      ERC4626_VAULT_FACTORIES: {
+        erc4626: "0x0000000000000000000000000000000000000000",
+      },
       MINT_HELPER: "0x2AE6F95F0AC61441D9eC9290000F81087567cDa1",
       SIMPLE_VAULTS_SEEDER: {
         simple: "0x808bC04030bC558C99E6844e877bb22D166A089A",
         aave: "0x095854c8C4591Fb0a413615B9a366B4Dd69b9B1D",
+      },
+      ERC4626_VAULT_SEEDERS: {
+        erc4626: "0x0000000000000000000000000000000000000000",
       },
       ORACLE_FACTORIES: {
         chainlinkv1: {
