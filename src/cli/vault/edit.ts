@@ -415,6 +415,30 @@ export async function editPriceRange(
       market: state.market,
     });
 
+    // Define funds state options
+    const fundsStateChoices = [
+      { name: getFundsStateString(FundsState.Vault), value: FundsState.Vault },
+      {
+        name: getFundsStateString(FundsState.Passive),
+        value: FundsState.Passive,
+      },
+      {
+        name: getFundsStateString(FundsState.Active),
+        value: FundsState.Active,
+      },
+    ];
+
+    // Prompt for new funds state
+    const { fundsState } = await inquirer.prompt([
+      {
+        type: "list",
+        name: "fundsState",
+        message: "Select the funds state",
+        choices: fundsStateChoices,
+        default: state.position.fundsState,
+      },
+    ]);
+
     // Construct new position data
     const newPosition: PositionData = {
       tickIndex0: baseQuoteTickIndex0,
@@ -422,10 +446,10 @@ export async function editPriceRange(
       params: {
         gasprice: state.position.params.gasprice,
         gasreq: state.position.params.gasreq,
-        stepSize: state.position.params.stepSize,
+        stepSize: 1,
         pricePoints: Number(pricePoints),
       },
-      fundsState: state.position.fundsState,
+      fundsState,
     };
 
     // Display new position configuration for confirmation

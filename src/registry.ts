@@ -96,44 +96,11 @@ export type RegistryEntry = {
  */
 export const registry: Array<RegistryEntry> = [
   {
-    chain: arbitrum,
-    vault: {
-      VAULT_FACTORY: "0x6B82CE8a45Ce9BeF9B20c3D65747356a5cDab41A",
-      MINT_HELPER: "0xC39b5Fb38a8AcBFFB51D876f0C0DA0325b5cD440",
-      SIMPLE_VAULTS_SEEDER: {
-        simple: "0x89139Bed90B1Bfb5501F27bE6D6f9901aE35745D",
-        aave: "0x55B12De431C6e355b56b79472a3632faec58FB5a",
-      },
-      ORACLE_FACTORIES: {
-        chainlinkv1: {
-          oracleFactory: "0x31c47E3F442F521E1c65b5b626aC2e978C1f2587",
-          type: "chainlinkv1",
-        },
-      },
-      ERC4626_VAULT_FACTORIES: {},
-      ERC4626_VAULT_SEEDERS: {},
-    },
-    mangrove: arbitrumMangrove,
-    chainlinkMetadataLink:
-      "https://reference-data-directory.vercel.app/feeds-ethereum-mainnet-arbitrum-1.json",
-    rebalance: {
-      odos: {
-        type: "odos",
-        data: {
-          apiLink: "https://api.odos.xyz/sor/quote/v2",
-          contract: "0xa669e7A0d4b3e4Fa48af2dE86BD4CD7126Be4e13",
-          assembleUrl: "https://api.odos.xyz/sor/assemble/v2",
-        },
-      },
-    },
-    rpcURL: process.env.ARBITRUM_RPC_URL,
-  },
-  {
     chain: base,
     vault: {
-      VAULT_FACTORY: "0xDA5ECD0eB8F9bA979A51A44a0C9Ab57F928CcE79",
+      VAULT_FACTORY: "0x26A0e433f89317Ca5585945198a5F0760C1dAFA5",
       ERC4626_VAULT_FACTORIES: {
-        erc4626: "0x0000000000000000000000000000000000000000",
+        erc4626: "0x92dB74A11Ec2b2acDCFC354cf55243cF33C052B8",
       },
       MINT_HELPER: "0x2AE6F95F0AC61441D9eC9290000F81087567cDa1",
       SIMPLE_VAULTS_SEEDER: {
@@ -141,7 +108,7 @@ export const registry: Array<RegistryEntry> = [
         aave: "0x095854c8C4591Fb0a413615B9a366B4Dd69b9B1D",
       },
       ERC4626_VAULT_SEEDERS: {
-        erc4626: "0x0000000000000000000000000000000000000000",
+        erc4626: "0x4778c54E6380BBC6eF9647f2A31528B0640B41fE",
       },
       ORACLE_FACTORIES: {
         chainlinkv1: {
@@ -176,5 +143,38 @@ export const registry: Array<RegistryEntry> = [
       },
     },
     rpcURL: process.env.BASE_RPC_URL,
+  },
+  {
+    chain: arbitrum,
+    vault: {
+      VAULT_FACTORY: "0x6B82CE8a45Ce9BeF9B20c3D65747356a5cDab41A",
+      MINT_HELPER: "0xC39b5Fb38a8AcBFFB51D876f0C0DA0325b5cD440",
+      SIMPLE_VAULTS_SEEDER: {
+        simple: "0x89139Bed90B1Bfb5501F27bE6D6f9901aE35745D",
+        aave: "0x55B12De431C6e355b56b79472a3632faec58FB5a",
+      },
+      ORACLE_FACTORIES: {
+        chainlinkv1: {
+          oracleFactory: "0x31c47E3F442F521E1c65b5b626aC2e978C1f2587",
+          type: "chainlinkv1",
+        },
+      },
+      ERC4626_VAULT_FACTORIES: {},
+      ERC4626_VAULT_SEEDERS: {},
+    },
+    mangrove: arbitrumMangrove,
+    chainlinkMetadataLink:
+      "https://reference-data-directory.vercel.app/feeds-ethereum-mainnet-arbitrum-1.json",
+    rebalance: {
+      odos: {
+        type: "odos",
+        data: {
+          apiLink: "https://api.odos.xyz/sor/quote/v2",
+          contract: "0xa669e7A0d4b3e4Fa48af2dE86BD4CD7126Be4e13",
+          assembleUrl: "https://api.odos.xyz/sor/assemble/v2",
+        },
+      },
+    },
+    rpcURL: process.env.ARBITRUM_RPC_URL,
   },
 ];

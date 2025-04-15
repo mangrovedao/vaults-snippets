@@ -329,17 +329,23 @@ export async function selectVault(
   return vault;
 }
 
-export async function selectFromEnum<TChoices extends string>(
+export async function selectFromEnum<
+  TChoices extends string,
+  TOmittedChoices extends TChoices
+>(
   message: string,
-  choices: Record<string, TChoices>
-) {
+  choices: Record<string, TChoices>,
+  omitKeys?: TOmittedChoices[]
+): Promise<Omit<TChoices, TOmittedChoices>> {
   const { choice } = await inquirer.prompt([
     {
       type: "list",
       name: "choice",
       message,
-      choices: Object.values(choices),
+      choices: Object.values(choices).filter(
+        (choice) => !omitKeys?.includes(choice as any)
+      ),
     },
   ]);
-  return choice as TChoices;
+  return choice as Omit<TChoices, TOmittedChoices>;
 }

@@ -1,9 +1,9 @@
 /**
  * Vault Read Operations Module
- * 
+ *
  * This module provides functions for reading data from Mangrove Vaults,
  * including current state, balances, positions, and other information.
- * 
+ *
  * @module vault/read
  */
 import {
@@ -15,15 +15,16 @@ import {
 import type { FeeData } from "./fee";
 import type { PositionData } from "./position";
 import type { Address, Client } from "viem";
-import { multicall } from "viem/actions";
+import { multicall, readContract } from "viem/actions";
 import { MangroveVaultAbi } from "../../abis/MangroveVault";
 import { getPrice } from "../oracle/read";
 import { FEE_PRECISION } from "../utils/constants";
 import type { SavedVault } from "../cli/select";
+import { ERC4626VaultAbi } from "../../abis/ERC4626VaultAbi";
 
 /**
  * Represents token balances for base and quote tokens
- * 
+ *
  * @property base - The base token balance
  * @property quote - The quote token balance
  */
@@ -34,7 +35,7 @@ type Balance = {
 
 /**
  * Comprehensive representation of a vault's current state
- * 
+ *
  * @property feeData - Fee configuration data
  * @property position - Position data including parameters and state
  * @property kandelBalance - Token balances held by the kandel strategy
@@ -59,13 +60,15 @@ export type CurrentVaultState = {
   owner: Address;
   kandel: Address;
   kandelState: GetKandelStateResult;
+  baseVault?: Address;
+  quoteVault?: Address;
 };
 
 /**
  * Retrieves the current state of a Mangrove Vault
- * 
+ *
  * Performs a multicall to efficiently fetch all relevant data from the vault and related contracts.
- * 
+ *
  * @param client - The blockchain client
  * @param vault - The address of the vault
  * @param mangroveParams - Mangrove protocol parameters
@@ -76,6 +79,15 @@ export async function getCurrentVaultState(
   vault: SavedVault,
   mangroveParams: MangroveActionsDefaultParams
 ): Promise<CurrentVaultState> {
+  const currentVaultsPromise =
+    vault.vaultType === "erc4626"
+      ? readContract(client, {
+          address: vault.address,
+          abi: ERC4626VaultAbi,
+          functionName: "currentVaults",
+        }).then((r) => ({ baseVault: r[0], quoteVault: r[1] }))
+      : Promise.resolve({ baseVault: undefined, quoteVault: undefined });
+
   const [
     [performanceFee, managementFee, feeRecipient],
     tickIndex0,
@@ -161,6 +173,8 @@ export async function getCurrentVaultState(
     .extend(kandelActions(mangroveParams, market, kandel))
     .getKandelState();
 
+  const { baseVault, quoteVault } = await currentVaultsPromise;
+
   return {
     feeData: {
       performanceFee: performanceFee / FEE_PRECISION,
@@ -188,5 +202,7 @@ export async function getCurrentVaultState(
     owner,
     kandel,
     kandelState,
+    baseVault,
+    quoteVault,
   };
 }

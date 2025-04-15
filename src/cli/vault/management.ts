@@ -1,4 +1,9 @@
-import type { Address, PrivateKeyAccount, PublicClient, WalletClient } from "viem";
+import type {
+  Address,
+  PrivateKeyAccount,
+  PublicClient,
+  WalletClient,
+} from "viem";
 import type { RegistryEntry } from "../../registry";
 import { selectFromEnum, selectVault, type SavedVault } from "../select";
 import { viewVault } from "./view";
@@ -9,15 +14,20 @@ import { addLiquidity } from "./add-liquidity";
 import { removeLiquidity } from "./remove-liquidity";
 import { rebalanceForm } from "../rebalance";
 import { logger } from "../../utils/logger";
+import { editERC4626Vaults } from "./edit-erc4626-vaults";
+import { addProvision, removeProvision } from "./provision";
 
 const VaultManagementAction = {
   VIEW_VAULT: "View Vault",
   CHANGE_FEE_DATA: "Change Fee Data",
   CHOOSE_PRICE_RANGE: "Choose Price Range",
   CHANGE_POSITION_DATA: "Change Position Data",
+  CHANGE_ERC4626_VAULTS: "Change ERC4626 Vaults",
   ADD_LIQUIDITY: "Add Liquidity",
   REMOVE_LIQUIDITY: "Remove Liquidity",
   REBALANCE: "Rebalance",
+  ADD_PROVISION: "Add Provision",
+  REMOVE_PROVISION: "Remove Provision",
   EXIT: "Exit",
 } as const;
 
@@ -28,7 +38,7 @@ export async function vaultManagement(
   account: PrivateKeyAccount,
   _vault?: SavedVault
 ) {
-  const vault = _vault ?? await selectVault(publicClient, registry.chain.id);
+  const vault = _vault ?? (await selectVault(publicClient, registry.chain.id));
   if (!vault) {
     logger.error("No vault selected");
     return;
@@ -41,7 +51,10 @@ export async function vaultManagement(
     );
     const action = await selectFromEnum(
       "What do you want to do?",
-      VaultManagementAction
+      VaultManagementAction,
+      vault.vaultType === "erc4626"
+        ? []
+        : [VaultManagementAction.CHANGE_ERC4626_VAULTS]
     );
 
     const spinner = ora("Fetching vault state...").start();
@@ -51,6 +64,16 @@ export async function vaultManagement(
     switch (action) {
       case VaultManagementAction.VIEW_VAULT:
         await viewVault(publicClient, registry, vault, vaultState);
+        break;
+      case VaultManagementAction.CHANGE_ERC4626_VAULTS:
+        await editERC4626Vaults(
+          publicClient,
+          walletClient,
+          account.address,
+          registry,
+          vault,
+          vaultState
+        );
         break;
       case VaultManagementAction.CHANGE_FEE_DATA:
         await editFee(walletClient, vault, vaultState.feeData);
@@ -85,6 +108,24 @@ export async function vaultManagement(
         await rebalanceForm(
           walletClient,
           registry,
+          account.address,
+          vault,
+          vaultState
+        );
+        break;
+      case VaultManagementAction.ADD_PROVISION:
+        await addProvision(
+          publicClient,
+          walletClient,
+          account.address,
+          vault,
+          vaultState
+        );
+        break;
+      case VaultManagementAction.REMOVE_PROVISION:
+        await removeProvision(
+          publicClient,
+          walletClient,
           account.address,
           vault,
           vaultState
