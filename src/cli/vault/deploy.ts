@@ -229,6 +229,6 @@ export async function deployVaultOnly(
     logger.error("Vault deployment failed");
     return;
   }
-  logger.info(`Vault deployed at ${vault} with oracle ${oracle}`);
+  logger.info(`Vault deployed at ${vault.address} with oracle ${oracle}`);
   await vaultManagement(publicClient, walletClient, registry, account, vault);
 }

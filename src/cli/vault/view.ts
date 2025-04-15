@@ -108,6 +108,7 @@ export async function viewVault(
     owner: data.owner,
     kandel: data.kandel,
     feeRecipient: data.feeData.feeRecipient,
+    vault: vault.address,
   });
   
   // Display current market price and tick
