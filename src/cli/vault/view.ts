@@ -5,7 +5,7 @@
  * It displays market data, fee structures, position parameters, balances, and offer information.
  */
 import { getCurrentVaultState, type CurrentVaultState } from "../../vault/read";
-import type { Address, PublicClient } from "viem";
+import type { PublicClient } from "viem";
 import type { RegistryEntry } from "../../registry";
 import { selectVault, type SavedVault } from "../select";
 import { formatUnits } from "viem";

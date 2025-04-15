@@ -62,6 +62,7 @@ export type CurrentVaultState = {
   kandelState: GetKandelStateResult;
   baseVault?: Address;
   quoteVault?: Address;
+  manager: Address;
 };
 
 /**
@@ -100,6 +101,7 @@ export async function getCurrentVaultState(
     oracle,
     owner,
     kandel,
+    manager,
   ] = await multicall(client, {
     contracts: [
       {
@@ -157,6 +159,11 @@ export async function getCurrentVaultState(
         abi: MangroveVaultAbi,
         functionName: "kandel",
       },
+      {
+        address: vault.address,
+        abi: MangroveVaultAbi,
+        functionName: "manager",
+      },
     ],
     allowFailure: false,
   });
@@ -204,5 +211,6 @@ export async function getCurrentVaultState(
     kandelState,
     baseVault,
     quoteVault,
+    manager,
   };
 }

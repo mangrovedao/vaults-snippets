@@ -6,365 +6,170 @@ export const MangroveVaultAbi = [
         name: "_seeder",
         type: "address",
       },
-      {
-        internalType: "address",
-        name: "_BASE",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_QUOTE",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "_tickSpacing",
-        type: "uint256",
-      },
-      {
-        internalType: "uint8",
-        name: "_decimals",
-        type: "uint8",
-      },
-      {
-        internalType: "string",
-        name: "name",
-        type: "string",
-      },
-      {
-        internalType: "string",
-        name: "symbol",
-        type: "string",
-      },
-      {
-        internalType: "address",
-        name: "_oracle",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_owner",
-        type: "address",
-      },
+      { internalType: "address", name: "_BASE", type: "address" },
+      { internalType: "address", name: "_QUOTE", type: "address" },
+      { internalType: "uint256", name: "_tickSpacing", type: "uint256" },
+      { internalType: "uint8", name: "_decimals", type: "uint8" },
+      { internalType: "string", name: "name", type: "string" },
+      { internalType: "string", name: "symbol", type: "string" },
+      { internalType: "address", name: "_oracle", type: "address" },
+      { internalType: "address", name: "_owner", type: "address" },
     ],
     stateMutability: "nonpayable",
     type: "constructor",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "target",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "target", type: "address" }],
     name: "AddressEmptyCode",
     type: "error",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
-    name: "AddressInsufficientBalance",
-    type: "error",
-  },
-  {
-    inputs: [
-      {
-        internalType: "address",
-        name: "unauthorizedToken",
-        type: "address",
-      },
+      { internalType: "address", name: "unauthorizedToken", type: "address" },
     ],
     name: "CannotWithdrawToken",
     type: "error",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "currentTotal",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "nextTotal",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "maxTotal",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "currentTotal", type: "uint256" },
+      { internalType: "uint256", name: "nextTotal", type: "uint256" },
+      { internalType: "uint256", name: "maxTotal", type: "uint256" },
     ],
     name: "DepositExceedsMaxTotal",
     type: "error",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "spender",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "allowance",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "needed",
-        type: "uint256",
-      },
+      { internalType: "address", name: "spender", type: "address" },
+      { internalType: "uint256", name: "allowance", type: "uint256" },
+      { internalType: "uint256", name: "needed", type: "uint256" },
     ],
     name: "ERC20InsufficientAllowance",
     type: "error",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "sender",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "balance",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "needed",
-        type: "uint256",
-      },
+      { internalType: "address", name: "sender", type: "address" },
+      { internalType: "uint256", name: "balance", type: "uint256" },
+      { internalType: "uint256", name: "needed", type: "uint256" },
     ],
     name: "ERC20InsufficientBalance",
     type: "error",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "approver",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "approver", type: "address" }],
     name: "ERC20InvalidApprover",
     type: "error",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "receiver",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "receiver", type: "address" }],
     name: "ERC20InvalidReceiver",
     type: "error",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "sender",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "sender", type: "address" }],
     name: "ERC20InvalidSender",
     type: "error",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "spender",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "spender", type: "address" }],
     name: "ERC20InvalidSpender",
     type: "error",
   },
-  {
-    inputs: [],
-    name: "EnforcedPause",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "ExpectedPause",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "FailedInnerCall",
-    type: "error",
-  },
+  { inputs: [], name: "EnforcedPause", type: "error" },
+  { inputs: [], name: "ExpectedPause", type: "error" },
+  { inputs: [], name: "FailedCall", type: "error" },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "expected",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "actual",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "expected", type: "uint256" },
+      { internalType: "uint256", name: "actual", type: "uint256" },
     ],
     name: "InitialMintSharesMismatch",
     type: "error",
   },
   {
-    inputs: [],
-    name: "MathOverflowedMulDiv",
+    inputs: [
+      { internalType: "uint256", name: "balance", type: "uint256" },
+      { internalType: "uint256", name: "needed", type: "uint256" },
+    ],
+    name: "InsufficientBalance",
     type: "error",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "maxAllowed",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "attempted",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "maxPriceSpread", type: "uint256" },
+    ],
+    name: "InvalidMaxPriceSpread",
+    type: "error",
+  },
+  {
+    inputs: [{ internalType: "address", name: "account", type: "address" }],
+    name: "ManagerOwnerUnauthorized",
+    type: "error",
+  },
+  {
+    inputs: [
+      { internalType: "uint256", name: "maxAllowed", type: "uint256" },
+      { internalType: "uint256", name: "attempted", type: "uint256" },
     ],
     name: "MaxFeeExceeded",
     type: "error",
   },
+  { inputs: [], name: "NativeTransferFailed", type: "error" },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "owner", type: "address" }],
     name: "OwnableInvalidOwner",
     type: "error",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "account", type: "address" }],
     name: "OwnableUnauthorizedAccount",
     type: "error",
   },
-  {
-    inputs: [],
-    name: "QuoteAmountOverflow",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "ReentrancyGuardReentrantCall",
-    type: "error",
-  },
+  { inputs: [], name: "QuoteAmountOverflow", type: "error" },
+  { inputs: [], name: "ReentrancyGuardReentrantCall", type: "error" },
   {
     inputs: [
-      {
-        internalType: "uint8",
-        name: "bits",
-        type: "uint8",
-      },
-      {
-        internalType: "int256",
-        name: "value",
-        type: "int256",
-      },
+      { internalType: "uint8", name: "bits", type: "uint8" },
+      { internalType: "int256", name: "value", type: "int256" },
     ],
     name: "SafeCastOverflowedIntDowncast",
     type: "error",
   },
   {
     inputs: [
-      {
-        internalType: "uint8",
-        name: "bits",
-        type: "uint8",
-      },
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
+      { internalType: "uint8", name: "bits", type: "uint8" },
+      { internalType: "uint256", name: "value", type: "uint256" },
     ],
     name: "SafeCastOverflowedUintDowncast",
     type: "error",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "value", type: "uint256" }],
     name: "SafeCastOverflowedUintToInt",
     type: "error",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "token", type: "address" }],
     name: "SafeERC20FailedOperation",
     type: "error",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "expected",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "received",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "expected", type: "uint256" },
+      { internalType: "uint256", name: "received", type: "uint256" },
     ],
     name: "SlippageExceeded",
     type: "error",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "target",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "target", type: "address" }],
     name: "UnauthorizedSwapContract",
     type: "error",
   },
-  {
-    inputs: [],
-    name: "ZeroAddress",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "ZeroAmount",
-    type: "error",
-  },
+  { inputs: [], name: "ZeroAddress", type: "error" },
+  { inputs: [], name: "ZeroAmount", type: "error" },
   {
     anonymous: false,
     inputs: [
@@ -418,12 +223,7 @@ export const MangroveVaultAbi = [
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
+      { indexed: true, internalType: "address", name: "user", type: "address" },
       {
         indexed: false,
         internalType: "uint256",
@@ -442,12 +242,7 @@ export const MangroveVaultAbi = [
         name: "quoteAmount",
         type: "uint256",
       },
-      {
-        indexed: false,
-        internalType: "int256",
-        name: "tick",
-        type: "int256",
-      },
+      { indexed: false, internalType: "int256", name: "tick", type: "int256" },
     ],
     name: "Burn",
     type: "event",
@@ -455,12 +250,7 @@ export const MangroveVaultAbi = [
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "user",
-        type: "address",
-      },
+      { indexed: true, internalType: "address", name: "user", type: "address" },
       {
         indexed: false,
         internalType: "uint256",
@@ -479,12 +269,7 @@ export const MangroveVaultAbi = [
         name: "quoteAmount",
         type: "uint256",
       },
-      {
-        indexed: false,
-        internalType: "int256",
-        name: "tick",
-        type: "int256",
-      },
+      { indexed: false, internalType: "int256", name: "tick", type: "int256" },
     ],
     name: "Mint",
     type: "event",
@@ -600,6 +385,32 @@ export const MangroveVaultAbi = [
     inputs: [
       {
         indexed: false,
+        internalType: "address",
+        name: "manager",
+        type: "address",
+      },
+    ],
+    name: "SetManager",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "maxPriceSpread",
+        type: "uint256",
+      },
+    ],
+    name: "SetMaxPriceSpread",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "uint256",
         name: "maxTotalInQuote",
         type: "uint256",
@@ -629,12 +440,7 @@ export const MangroveVaultAbi = [
         name: "quoteAmountChange",
         type: "int256",
       },
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "sell",
-        type: "bool",
-      },
+      { indexed: false, internalType: "bool", name: "sell", type: "bool" },
     ],
     name: "Swap",
     type: "event",
@@ -648,12 +454,7 @@ export const MangroveVaultAbi = [
         name: "swapContract",
         type: "address",
       },
-      {
-        indexed: false,
-        internalType: "bool",
-        name: "allowed",
-        type: "bool",
-      },
+      { indexed: false, internalType: "bool", name: "allowed", type: "bool" },
     ],
     name: "SwapContractAllowed",
     type: "event",
@@ -661,18 +462,8 @@ export const MangroveVaultAbi = [
   {
     anonymous: false,
     inputs: [
-      {
-        indexed: true,
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        indexed: true,
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
+      { indexed: true, internalType: "address", name: "from", type: "address" },
+      { indexed: true, internalType: "address", name: "to", type: "address" },
       {
         indexed: false,
         internalType: "uint256",
@@ -719,22 +510,27 @@ export const MangroveVaultAbi = [
     inputs: [],
     name: "MGV",
     outputs: [
-      {
-        internalType: "contract IMangrove",
-        name: "",
-        type: "address",
-      },
+      { internalType: "contract IMangrove", name: "", type: "address" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "contractAddress",
-        type: "address",
-      },
+      { internalType: "uint256", name: "amountOut", type: "uint256" },
+      { internalType: "uint256", name: "_amountInMin", type: "uint256" },
+      { internalType: "bool", name: "sell", type: "bool" },
+    ],
+    name: "adjustedAmountInMin",
+    outputs: [
+      { internalType: "uint256", name: "amountInMin", type: "uint256" },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "contractAddress", type: "address" },
     ],
     name: "allowSwapContract",
     outputs: [],
@@ -743,120 +539,48 @@ export const MangroveVaultAbi = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "owner",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "spender",
-        type: "address",
-      },
+      { internalType: "address", name: "owner", type: "address" },
+      { internalType: "address", name: "spender", type: "address" },
     ],
     name: "allowance",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "", type: "address" }],
     name: "allowedSwapContracts",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "spender",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
+      { internalType: "address", name: "spender", type: "address" },
+      { internalType: "uint256", name: "value", type: "uint256" },
     ],
     name: "approve",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "account",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "account", type: "address" }],
     name: "balanceOf",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "shares",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "minAmountBaseOut",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "minAmountQuoteOut",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "shares", type: "uint256" },
+      { internalType: "uint256", name: "minAmountBaseOut", type: "uint256" },
+      { internalType: "uint256", name: "minAmountQuoteOut", type: "uint256" },
     ],
     name: "burn",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "amountBaseOut",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "amountQuoteOut",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "amountBaseOut", type: "uint256" },
+      { internalType: "uint256", name: "amountQuoteOut", type: "uint256" },
     ],
     stateMutability: "nonpayable",
     type: "function",
@@ -864,36 +588,20 @@ export const MangroveVaultAbi = [
   {
     inputs: [],
     name: "currentTick",
-    outputs: [
-      {
-        internalType: "Tick",
-        name: "",
-        type: "int256",
-      },
-    ],
+    outputs: [{ internalType: "Tick", name: "", type: "int256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "decimals",
-    outputs: [
-      {
-        internalType: "uint8",
-        name: "",
-        type: "uint8",
-      },
-    ],
+    outputs: [{ internalType: "uint8", name: "", type: "uint8" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "contractAddress",
-        type: "address",
-      },
+      { internalType: "address", name: "contractAddress", type: "address" },
     ],
     name: "disallowSwapContract",
     outputs: [],
@@ -904,21 +612,9 @@ export const MangroveVaultAbi = [
     inputs: [],
     name: "feeData",
     outputs: [
-      {
-        internalType: "uint16",
-        name: "performanceFee",
-        type: "uint16",
-      },
-      {
-        internalType: "uint16",
-        name: "managementFee",
-        type: "uint16",
-      },
-      {
-        internalType: "address",
-        name: "feeRecipient",
-        type: "address",
-      },
+      { internalType: "uint16", name: "performanceFee", type: "uint16" },
+      { internalType: "uint16", name: "managementFee", type: "uint16" },
+      { internalType: "address", name: "feeRecipient", type: "address" },
     ],
     stateMutability: "view",
     type: "function",
@@ -933,13 +629,7 @@ export const MangroveVaultAbi = [
   {
     inputs: [],
     name: "fundsState",
-    outputs: [
-      {
-        internalType: "enum FundsState",
-        name: "",
-        type: "uint8",
-      },
-    ],
+    outputs: [{ internalType: "enum FundsState", name: "", type: "uint8" }],
     stateMutability: "view",
     type: "function",
   },
@@ -947,50 +637,22 @@ export const MangroveVaultAbi = [
     inputs: [],
     name: "getKandelBalances",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "baseAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "quoteAmount",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "baseAmount", type: "uint256" },
+      { internalType: "uint256", name: "quoteAmount", type: "uint256" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "baseAmountMax",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "quoteAmountMax",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "baseAmountMax", type: "uint256" },
+      { internalType: "uint256", name: "quoteAmountMax", type: "uint256" },
     ],
     name: "getMintAmounts",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "baseAmountOut",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "quoteAmountOut",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "shares",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "baseAmountOut", type: "uint256" },
+      { internalType: "uint256", name: "quoteAmountOut", type: "uint256" },
+      { internalType: "uint256", name: "shares", type: "uint256" },
     ],
     stateMutability: "view",
     type: "function",
@@ -999,16 +661,8 @@ export const MangroveVaultAbi = [
     inputs: [],
     name: "getTotalInQuote",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "quoteAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "Tick",
-        name: "tick",
-        type: "int256",
-      },
+      { internalType: "uint256", name: "quoteAmount", type: "uint256" },
+      { internalType: "Tick", name: "tick", type: "int256" },
     ],
     stateMutability: "view",
     type: "function",
@@ -1017,40 +671,18 @@ export const MangroveVaultAbi = [
     inputs: [],
     name: "getUnderlyingBalances",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "baseAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "quoteAmount",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "baseAmount", type: "uint256" },
+      { internalType: "uint256", name: "quoteAmount", type: "uint256" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "share",
-        type: "uint256",
-      },
-    ],
+    inputs: [{ internalType: "uint256", name: "share", type: "uint256" }],
     name: "getUnderlyingBalancesByShare",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "baseAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "quoteAmount",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "baseAmount", type: "uint256" },
+      { internalType: "uint256", name: "quoteAmount", type: "uint256" },
     ],
     stateMutability: "view",
     type: "function",
@@ -1059,16 +691,8 @@ export const MangroveVaultAbi = [
     inputs: [],
     name: "getVaultBalances",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "baseAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "quoteAmount",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "baseAmount", type: "uint256" },
+      { internalType: "uint256", name: "quoteAmount", type: "uint256" },
     ],
     stateMutability: "view",
     type: "function",
@@ -1077,11 +701,7 @@ export const MangroveVaultAbi = [
     inputs: [],
     name: "kandel",
     outputs: [
-      {
-        internalType: "contract GeometricKandel",
-        name: "",
-        type: "address",
-      },
+      { internalType: "contract GeometricKandel", name: "", type: "address" },
     ],
     stateMutability: "view",
     type: "function",
@@ -1092,26 +712,10 @@ export const MangroveVaultAbi = [
     outputs: [
       {
         components: [
-          {
-            internalType: "uint32",
-            name: "gasprice",
-            type: "uint32",
-          },
-          {
-            internalType: "uint24",
-            name: "gasreq",
-            type: "uint24",
-          },
-          {
-            internalType: "uint32",
-            name: "stepSize",
-            type: "uint32",
-          },
-          {
-            internalType: "uint32",
-            name: "pricePoints",
-            type: "uint32",
-          },
+          { internalType: "uint32", name: "gasprice", type: "uint32" },
+          { internalType: "uint24", name: "gasreq", type: "uint24" },
+          { internalType: "uint32", name: "stepSize", type: "uint32" },
+          { internalType: "uint32", name: "pricePoints", type: "uint32" },
         ],
         internalType: "struct Params",
         name: "params",
@@ -1124,26 +728,28 @@ export const MangroveVaultAbi = [
   {
     inputs: [],
     name: "kandelTickOffset",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "lastTimestamp",
-    outputs: [
-      {
-        internalType: "uint32",
-        name: "",
-        type: "uint32",
-      },
-    ],
+    outputs: [{ internalType: "uint32", name: "", type: "uint32" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "lastTotalInQuote",
+    outputs: [{ internalType: "uint128", name: "", type: "uint128" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "manager",
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
@@ -1151,60 +757,38 @@ export const MangroveVaultAbi = [
     inputs: [],
     name: "market",
     outputs: [
-      {
-        internalType: "address",
-        name: "base",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "quote",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "tickSpacing",
-        type: "uint256",
-      },
+      { internalType: "address", name: "base", type: "address" },
+      { internalType: "address", name: "quote", type: "address" },
+      { internalType: "uint256", name: "tickSpacing", type: "uint256" },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
+    inputs: [],
+    name: "maxPriceSpread",
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "maxTotalInQuote",
+    outputs: [{ internalType: "uint128", name: "", type: "uint128" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "mintAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "baseAmountMax",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "quoteAmountMax",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "mintAmount", type: "uint256" },
+      { internalType: "uint256", name: "baseAmountMax", type: "uint256" },
+      { internalType: "uint256", name: "quoteAmountMax", type: "uint256" },
     ],
     name: "mint",
     outputs: [
-      {
-        internalType: "uint256",
-        name: "shares",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "baseAmount",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "quoteAmount",
-        type: "uint256",
-      },
+      { internalType: "uint256", name: "shares", type: "uint256" },
+      { internalType: "uint256", name: "baseAmount", type: "uint256" },
+      { internalType: "uint256", name: "quoteAmount", type: "uint256" },
     ],
     stateMutability: "nonpayable",
     type: "function",
@@ -1212,50 +796,26 @@ export const MangroveVaultAbi = [
   {
     inputs: [],
     name: "name",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
+    outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "oracle",
-    outputs: [
-      {
-        internalType: "contract IOracle",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "contract IOracle", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "owner",
-    outputs: [
-      {
-        internalType: "address",
-        name: "",
-        type: "address",
-      },
-    ],
+    outputs: [{ internalType: "address", name: "", type: "address" }],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "bool",
-        name: "pause_",
-        type: "bool",
-      },
-    ],
+    inputs: [{ internalType: "bool", name: "pause_", type: "bool" }],
     name: "pause",
     outputs: [],
     stateMutability: "nonpayable",
@@ -1264,13 +824,7 @@ export const MangroveVaultAbi = [
   {
     inputs: [],
     name: "paused",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "view",
     type: "function",
   },
@@ -1296,21 +850,9 @@ export const MangroveVaultAbi = [
   },
   {
     inputs: [
-      {
-        internalType: "uint16",
-        name: "performanceFee",
-        type: "uint16",
-      },
-      {
-        internalType: "uint16",
-        name: "managementFee",
-        type: "uint16",
-      },
-      {
-        internalType: "address",
-        name: "feeRecipient",
-        type: "address",
-      },
+      { internalType: "uint16", name: "performanceFee", type: "uint16" },
+      { internalType: "uint16", name: "managementFee", type: "uint16" },
+      { internalType: "address", name: "feeRecipient", type: "address" },
     ],
     name: "setFeeData",
     outputs: [],
@@ -1318,12 +860,24 @@ export const MangroveVaultAbi = [
     type: "function",
   },
   {
+    inputs: [{ internalType: "address", name: "newManager", type: "address" }],
+    name: "setManager",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
-      {
-        internalType: "uint128",
-        name: "maxTotalInQuote",
-        type: "uint128",
-      },
+      { internalType: "uint256", name: "newMaxPriceSpread", type: "uint256" },
+    ],
+    name: "setMaxPriceSpread",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "uint128", name: "_maxTotalInQuote", type: "uint128" },
     ],
     name: "setMaxTotalInQuote",
     outputs: [],
@@ -1334,38 +888,14 @@ export const MangroveVaultAbi = [
     inputs: [
       {
         components: [
-          {
-            internalType: "Tick",
-            name: "tickIndex0",
-            type: "int256",
-          },
-          {
-            internalType: "uint256",
-            name: "tickOffset",
-            type: "uint256",
-          },
+          { internalType: "Tick", name: "tickIndex0", type: "int256" },
+          { internalType: "uint256", name: "tickOffset", type: "uint256" },
           {
             components: [
-              {
-                internalType: "uint32",
-                name: "gasprice",
-                type: "uint32",
-              },
-              {
-                internalType: "uint24",
-                name: "gasreq",
-                type: "uint24",
-              },
-              {
-                internalType: "uint32",
-                name: "stepSize",
-                type: "uint32",
-              },
-              {
-                internalType: "uint32",
-                name: "pricePoints",
-                type: "uint32",
-              },
+              { internalType: "uint32", name: "gasprice", type: "uint32" },
+              { internalType: "uint24", name: "gasreq", type: "uint24" },
+              { internalType: "uint32", name: "stepSize", type: "uint32" },
+              { internalType: "uint32", name: "pricePoints", type: "uint32" },
             ],
             internalType: "struct Params",
             name: "params",
@@ -1389,98 +919,37 @@ export const MangroveVaultAbi = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "target",
-        type: "address",
-      },
-      {
-        internalType: "bytes",
-        name: "data",
-        type: "bytes",
-      },
-      {
-        internalType: "uint256",
-        name: "amountOut",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "amountInMin",
-        type: "uint256",
-      },
-      {
-        internalType: "bool",
-        name: "sell",
-        type: "bool",
-      },
+      { internalType: "address", name: "target", type: "address" },
+      { internalType: "bytes", name: "data", type: "bytes" },
+      { internalType: "uint256", name: "amountOut", type: "uint256" },
+      { internalType: "uint256", name: "amountInMin", type: "uint256" },
+      { internalType: "bool", name: "sell", type: "bool" },
     ],
     name: "swap",
-    outputs: [],
+    outputs: [
+      { internalType: "int256", name: "netBaseChange", type: "int256" },
+      { internalType: "int256", name: "netQuoteChange", type: "int256" },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "target",
-        type: "address",
-      },
-      {
-        internalType: "bytes",
-        name: "data",
-        type: "bytes",
-      },
-      {
-        internalType: "uint256",
-        name: "amountOut",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "amountInMin",
-        type: "uint256",
-      },
-      {
-        internalType: "bool",
-        name: "sell",
-        type: "bool",
-      },
+      { internalType: "address", name: "target", type: "address" },
+      { internalType: "bytes", name: "data", type: "bytes" },
+      { internalType: "uint256", name: "amountOut", type: "uint256" },
+      { internalType: "uint256", name: "amountInMin", type: "uint256" },
+      { internalType: "bool", name: "sell", type: "bool" },
       {
         components: [
-          {
-            internalType: "Tick",
-            name: "tickIndex0",
-            type: "int256",
-          },
-          {
-            internalType: "uint256",
-            name: "tickOffset",
-            type: "uint256",
-          },
+          { internalType: "Tick", name: "tickIndex0", type: "int256" },
+          { internalType: "uint256", name: "tickOffset", type: "uint256" },
           {
             components: [
-              {
-                internalType: "uint32",
-                name: "gasprice",
-                type: "uint32",
-              },
-              {
-                internalType: "uint24",
-                name: "gasreq",
-                type: "uint24",
-              },
-              {
-                internalType: "uint32",
-                name: "stepSize",
-                type: "uint32",
-              },
-              {
-                internalType: "uint32",
-                name: "pricePoints",
-                type: "uint32",
-              },
+              { internalType: "uint32", name: "gasprice", type: "uint32" },
+              { internalType: "uint24", name: "gasreq", type: "uint24" },
+              { internalType: "uint32", name: "stepSize", type: "uint32" },
+              { internalType: "uint32", name: "pricePoints", type: "uint32" },
             ],
             internalType: "struct Params",
             name: "params",
@@ -1498,110 +967,57 @@ export const MangroveVaultAbi = [
       },
     ],
     name: "swapAndSetPosition",
-    outputs: [],
+    outputs: [
+      { internalType: "int256", name: "netBaseChange", type: "int256" },
+      { internalType: "int256", name: "netQuoteChange", type: "int256" },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [],
     name: "symbol",
-    outputs: [
-      {
-        internalType: "string",
-        name: "",
-        type: "string",
-      },
-    ],
+    outputs: [{ internalType: "string", name: "", type: "string" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "tickIndex0",
-    outputs: [
-      {
-        internalType: "int24",
-        name: "",
-        type: "int24",
-      },
-    ],
+    outputs: [{ internalType: "int24", name: "", type: "int24" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
     name: "totalSupply",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
+    outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "value", type: "uint256" },
     ],
     name: "transfer",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "from",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "to",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "value",
-        type: "uint256",
-      },
+      { internalType: "address", name: "from", type: "address" },
+      { internalType: "address", name: "to", type: "address" },
+      { internalType: "uint256", name: "value", type: "uint256" },
     ],
     name: "transferFrom",
-    outputs: [
-      {
-        internalType: "bool",
-        name: "",
-        type: "bool",
-      },
-    ],
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: "address",
-        name: "newOwner",
-        type: "address",
-      },
-    ],
+    inputs: [{ internalType: "address", name: "newOwner", type: "address" }],
     name: "transferOwnership",
     outputs: [],
     stateMutability: "nonpayable",
@@ -1616,16 +1032,8 @@ export const MangroveVaultAbi = [
   },
   {
     inputs: [
-      {
-        internalType: "address",
-        name: "token",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
+      { internalType: "address", name: "token", type: "address" },
+      { internalType: "uint256", name: "amount", type: "uint256" },
     ],
     name: "withdrawERC20",
     outputs: [],
@@ -1634,16 +1042,8 @@ export const MangroveVaultAbi = [
   },
   {
     inputs: [
-      {
-        internalType: "uint256",
-        name: "amount",
-        type: "uint256",
-      },
-      {
-        internalType: "address payable",
-        name: "receiver",
-        type: "address",
-      },
+      { internalType: "uint256", name: "amount", type: "uint256" },
+      { internalType: "address payable", name: "receiver", type: "address" },
     ],
     name: "withdrawFromMangrove",
     outputs: [],
@@ -1657,8 +1057,5 @@ export const MangroveVaultAbi = [
     stateMutability: "nonpayable",
     type: "function",
   },
-  {
-    stateMutability: "payable",
-    type: "receive",
-  },
+  { stateMutability: "payable", type: "receive" },
 ] as const;
