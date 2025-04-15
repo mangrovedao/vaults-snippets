@@ -1,6 +1,6 @@
 /**
  * Vault Editing Module
- * 
+ *
  * This module provides functionality for editing vault parameters through an interactive CLI.
  * It allows users to modify fee structures, position parameters, and price ranges for vaults.
  */
@@ -9,31 +9,42 @@ import { type RegistryEntry } from "../../registry";
 import { logger } from "../../utils/logger";
 import { setFee, type FeeData } from "../../vault/fee";
 import { getCurrentVaultState, type CurrentVaultState } from "../../vault/read";
-import { selectAddress, selectVault } from "../select";
-import type { Address, PublicClient, WalletClient, Client } from "viem";
+import {
+  selectAddress,
+  selectFromEnum,
+  selectVault,
+  type SavedVault,
+} from "../select";
+import {
+  type Address,
+  type PublicClient,
+  type WalletClient,
+  isAddressEqual,
+} from "viem";
 import { FEE_PRECISION } from "../../utils/constants";
 import {
   FundsState,
   type PositionData,
   setPosition,
 } from "../../vault/position";
-import { getKandelPositionRawParams, type MarketParams } from "@mangrovedao/mgv";
+import { getKandelPositionRawParams } from "@mangrovedao/mgv";
+import { setManager, setOwner } from "../../vault/owner";
 
 /**
  * Guides the user through editing fee parameters for a vault
- * 
+ *
  * This function:
  * 1. Displays current fee configuration
  * 2. Prompts for new fee recipient and fee percentages
  * 3. Validates inputs and confirms changes before submission
- * 
+ *
  * @param client - The wallet client for signing transactions
  * @param vault - The address of the vault to edit
  * @param currentFee - The current fee configuration of the vault
  */
 export async function editFee(
   client: WalletClient,
-  vault: Address,
+  vault: SavedVault,
   currentFee: FeeData
 ) {
   while (true) {
@@ -47,7 +58,7 @@ export async function editFee(
       "Enter the fee recipient",
       currentFee.feeRecipient
     );
-    
+
     // Prompt for new fee percentages
     const {
       performanceFee: performanceFeeStr,
@@ -133,7 +144,7 @@ export async function editFee(
     }
 
     // Submit fee changes to the blockchain
-    const success = await setFee(client, vault, newFeeData);
+    const success = await setFee(client, vault.address, newFeeData);
     if (success) {
       break;
     } else {
@@ -144,19 +155,19 @@ export async function editFee(
 
 /**
  * Guides the user through editing position parameters for a vault
- * 
+ *
  * This function:
  * 1. Displays current position configuration
  * 2. Prompts for new tick indices, gas parameters, and funds state
  * 3. Validates inputs and confirms changes before submission
- * 
+ *
  * @param client - The wallet client for signing transactions
  * @param vault - The address of the vault to edit
  * @param currentPosition - The current position configuration of the vault
  */
 export async function editPosition(
   client: WalletClient,
-  vault: Address,
+  vault: SavedVault,
   currentPosition: PositionData
 ) {
   while (true) {
@@ -318,7 +329,7 @@ export async function editPosition(
     if (confirm) {
       try {
         // Submit position changes to the blockchain
-        await setPosition(client, vault, newPosition);
+        await setPosition(client, vault.address, newPosition);
         logger.info("Position updated successfully");
         return;
       } catch (e) {
@@ -342,20 +353,20 @@ export async function editPosition(
 
 /**
  * Guides the user through editing price range parameters for a vault
- * 
+ *
  * This function:
  * 1. Displays current price
  * 2. Prompts for new price points, minimum price, and maximum price
  * 3. Calculates appropriate tick parameters based on price inputs
  * 4. Confirms changes before submission
- * 
+ *
  * @param client - The wallet client for signing transactions
  * @param vault - The address of the vault to edit
  * @param state - The current state of the vault including price information
  */
 export async function editPriceRange(
   client: WalletClient,
-  vault: Address,
+  vault: SavedVault,
   state: CurrentVaultState
 ) {
   const { currentPrice } = state;
@@ -407,13 +418,38 @@ export async function editPriceRange(
     ]);
 
     // Calculate tick parameters based on price inputs
-    const { baseQuoteTickIndex0, baseQuoteTickOffset } = getKandelPositionRawParams({
-      minPrice,
-      maxPrice,
-      midPrice: currentPrice,
-      pricePoints,
-      market: state.market,
-    });
+    const { baseQuoteTickIndex0, baseQuoteTickOffset } =
+      getKandelPositionRawParams({
+        minPrice,
+        maxPrice,
+        midPrice: currentPrice,
+        pricePoints,
+        market: state.market,
+      });
+
+    // Define funds state options
+    const fundsStateChoices = [
+      { name: getFundsStateString(FundsState.Vault), value: FundsState.Vault },
+      {
+        name: getFundsStateString(FundsState.Passive),
+        value: FundsState.Passive,
+      },
+      {
+        name: getFundsStateString(FundsState.Active),
+        value: FundsState.Active,
+      },
+    ];
+
+    // Prompt for new funds state
+    const { fundsState } = await inquirer.prompt([
+      {
+        type: "list",
+        name: "fundsState",
+        message: "Select the funds state",
+        choices: fundsStateChoices,
+        default: state.position.fundsState,
+      },
+    ]);
 
     // Construct new position data
     const newPosition: PositionData = {
@@ -422,10 +458,10 @@ export async function editPriceRange(
       params: {
         gasprice: state.position.params.gasprice,
         gasreq: state.position.params.gasreq,
-        stepSize: state.position.params.stepSize,
+        stepSize: 1,
         pricePoints: Number(pricePoints),
       },
-      fundsState: state.position.fundsState,
+      fundsState,
     };
 
     // Display new position configuration for confirmation
@@ -452,7 +488,7 @@ export async function editPriceRange(
     if (confirm) {
       try {
         // Submit position changes to the blockchain
-        await setPosition(client, vault, newPosition);
+        await setPosition(client, vault.address, newPosition);
         logger.info("Position updated successfully");
         return;
       } catch (e) {
@@ -476,7 +512,7 @@ export async function editPriceRange(
 
 /**
  * Converts FundsState enum values to human-readable strings
- * 
+ *
  * @param fundsState - The funds state enum value
  * @returns A descriptive string representing the funds state
  */
@@ -491,14 +527,52 @@ function getFundsStateString(fundsState: FundsState): string {
   }
 }
 
+async function editOwner(
+  client: WalletClient,
+  vault: SavedVault,
+  currentOwner: Address
+) {
+  const newOwner = await selectAddress("Enter the new owner", currentOwner);
+  if (isAddressEqual(currentOwner, newOwner)) {
+    logger.info("New owner is the same as the current owner");
+    return;
+  }
+  await setOwner(client, vault.address, newOwner);
+}
+
+async function editManager(
+  client: WalletClient,
+  vault: SavedVault,
+  currentManager: Address
+) {
+  const newManager = await selectAddress(
+    "Enter the new manager",
+    currentManager
+  );
+  if (isAddressEqual(currentManager, newManager)) {
+    logger.info("New manager is the same as the current manager");
+    return;
+  }
+  await setManager(client, vault.address, newManager);
+}
+
+enum EditAction {
+  Fee = "fee",
+  Position = "position",
+  PriceRange = "priceRange",
+  Owner = "owner",
+  Manager = "manager",
+  Cancel = "cancel",
+}
+
 /**
  * Main function for editing vault parameters through the CLI
- * 
+ *
  * This function:
  * 1. Prompts the user to select a vault
  * 2. Offers options to edit fees, position parameters, or price range
  * 3. Routes to the appropriate editing function based on user selection
- * 
+ *
  * @param publicClient - The public blockchain client for reading data
  * @param walletClient - The wallet client for signing transactions
  * @param registry - The registry entry containing contract addresses and chain information
@@ -510,23 +584,14 @@ export async function editVault(
 ) {
   // Select the vault to edit
   const vault = await selectVault(publicClient, registry.chain.id);
+  if (!vault) {
+    logger.error("No vault selected");
+    return;
+  }
 
-  // Prompt for the type of edit to perform
-  const { action } = await inquirer.prompt([
-    {
-      type: "list",
-      name: "action",
-      message: "What do you want to edit?",
-      choices: [
-        { name: "Fee", value: "fee" },
-        { name: "Position", value: "position" },
-        { name: "Price range", value: "priceRange" },
-        { name: "Cancel", value: "cancel" },
-      ],
-    },
-  ]);
+  const action = await selectFromEnum("What do you want to edit?", EditAction);
 
-  if (action === "cancel") {
+  if (action === EditAction.Cancel) {
     return;
   }
 
@@ -542,11 +607,15 @@ export async function editVault(
   );
 
   // Route to the appropriate editing function
-  if (action === "fee") {
+  if (action === EditAction.Fee) {
     await editFee(walletClient, vault, vaultState.feeData);
-  } else if (action === "position") {
+  } else if (action === EditAction.Position) {
     await editPosition(walletClient, vault, vaultState.position);
-  } else if (action === "priceRange") {
+  } else if (action === EditAction.PriceRange) {
     await editPriceRange(walletClient, vault, vaultState);
+  } else if (action === EditAction.Owner) {
+    await editOwner(walletClient, vault, vaultState.owner);
+  } else if (action === EditAction.Manager) {
+    await editManager(walletClient, vault, vaultState.manager);
   }
 }

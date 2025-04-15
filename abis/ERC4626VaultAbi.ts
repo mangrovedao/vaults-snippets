@@ -1,4 +1,4 @@
-export const MangroveVaultAbi = [
+export const ERC4626VaultAbi = [
   {
     inputs: [
       {
@@ -79,6 +79,7 @@ export const MangroveVaultAbi = [
   },
   { inputs: [], name: "EnforcedPause", type: "error" },
   { inputs: [], name: "ExpectedPause", type: "error" },
+  { inputs: [], name: "FailedCall", type: "error" },
   { inputs: [], name: "FailedCall", type: "error" },
   {
     inputs: [
@@ -530,6 +531,27 @@ export const MangroveVaultAbi = [
   },
   {
     inputs: [
+      { internalType: "uint256", name: "amount", type: "uint256" },
+      { internalType: "address", name: "recipient", type: "address" },
+    ],
+    name: "adminWithdrawNative",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "contract IERC20", name: "token", type: "address" },
+      { internalType: "uint256", name: "amount", type: "uint256" },
+      { internalType: "address", name: "recipient", type: "address" },
+    ],
+    name: "adminWithdrawTokens",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
       { internalType: "address", name: "contractAddress", type: "address" },
     ],
     name: "allowSwapContract",
@@ -589,6 +611,16 @@ export const MangroveVaultAbi = [
     inputs: [],
     name: "currentTick",
     outputs: [{ internalType: "Tick", name: "", type: "int256" }],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "currentVaults",
+    outputs: [
+      { internalType: "address", name: "baseVault", type: "address" },
+      { internalType: "address", name: "quoteVault", type: "address" },
+    ],
     stateMutability: "view",
     type: "function",
   },
@@ -913,6 +945,18 @@ export const MangroveVaultAbi = [
       },
     ],
     name: "setPosition",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "contract IERC20", name: "token", type: "address" },
+      { internalType: "contract IERC4626", name: "vault", type: "address" },
+      { internalType: "uint256", name: "minAssetsOut", type: "uint256" },
+      { internalType: "uint256", name: "minSharesOut", type: "uint256" },
+    ],
+    name: "setVaultForToken",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

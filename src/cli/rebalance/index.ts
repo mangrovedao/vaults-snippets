@@ -1,6 +1,6 @@
 import type { Address, Client } from "viem";
 import type { RegistryEntry } from "../../registry";
-import { selectVault } from "../select";
+import { selectVault, type SavedVault } from "../select";
 import { getCurrentVaultState, type CurrentVaultState } from "../../vault/read";
 import inquirer from "inquirer";
 import { logger } from "../../utils/logger";
@@ -14,11 +14,15 @@ export async function rebalanceForm(
   client: Client,
   registry: RegistryEntry,
   sender: Address,
-  vault?: Address,
+  vault?: SavedVault,
   vaultState?: CurrentVaultState
 ) {
   if (!vault) {
     vault = await selectVault(client, registry.chain.id);
+  }
+  if (!vault) {
+    logger.error("No vault selected");
+    return;
   }
 
   const statePromise = vaultState
@@ -49,7 +53,7 @@ export async function rebalanceForm(
       // Handle Odos rebalance flow
       return await rebalanceOdos(
         client,
-        vault,
+        vault.address,
         state,
         rebalanceType,
         registry,

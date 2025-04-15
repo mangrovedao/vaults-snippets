@@ -44,13 +44,13 @@ async function main() {
 
   const publicClient = createPublicClient({
     chain: chain.chain,
-    transport: http(),
+    transport: http(chain.rpcURL),
   });
 
   const walletClient = createWalletClient({
     account,
     chain: chain.chain,
-    transport: http(),
+    transport: http(chain.rpcURL),
   });
 
   while (true) {

@@ -5,9 +5,9 @@
  * It displays market data, fee structures, position parameters, balances, and offer information.
  */
 import { getCurrentVaultState, type CurrentVaultState } from "../../vault/read";
-import type { Address, PublicClient } from "viem";
+import type { PublicClient } from "viem";
 import type { RegistryEntry } from "../../registry";
-import { selectVault } from "../select";
+import { selectVault, type SavedVault } from "../select";
 import { formatUnits } from "viem";
 import { logger } from "../../utils/logger";
 import chalk from "chalk";
@@ -35,12 +35,16 @@ import readlineSync from "readline";
 export async function viewVault(
   publicClient: PublicClient,
   registry: RegistryEntry,
-  vault?: Address,
+  vault?: SavedVault,
   vaultState?: CurrentVaultState
 ) {
   // Select the vault to view
   if (!vault) {
     vault = await selectVault(publicClient, registry.chain.id);
+  }
+  if (!vault) {
+    logger.error("No vault selected");
+    return;
   }
   
   // Fetch current state data for the selected vault
@@ -104,6 +108,7 @@ export async function viewVault(
     owner: data.owner,
     kandel: data.kandel,
     feeRecipient: data.feeData.feeRecipient,
+    vault: vault.address,
   });
   
   // Display current market price and tick

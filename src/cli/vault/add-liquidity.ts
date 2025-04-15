@@ -6,7 +6,7 @@
  */
 import type { Address, PublicClient, WalletClient } from "viem";
 import type { RegistryEntry } from "../../registry";
-import { selectAddress, selectVault } from "../select";
+import { selectAddress, selectVault, type SavedVault } from "../select";
 import { getCurrentVaultState, type CurrentVaultState } from "../../vault/read";
 import ora from "ora";
 import { getBalancesForMarket } from "../balances";
@@ -14,6 +14,7 @@ import inquirer from "inquirer";
 import { formatUnits, parseUnits } from "viem";
 import { getMintAmounts } from "../../vault/mint/get-mint-amount";
 import { mint } from "../../vault/mint/mint";
+import { logger } from "../../utils/logger";
 
 /**
  * Guides the user through adding liquidity to a selected vault
@@ -36,12 +37,16 @@ export async function addLiquidity(
   walletClient: WalletClient,
   account: Address,
   registry: RegistryEntry,
-  vault?: Address,
+  vault?: SavedVault,
   vaultState?: CurrentVaultState
 ) {
   // Select vault to add liquidity to
   if (!vault) {
     vault = await selectVault(publicClient, registry.chain.id);
+  }
+  if (!vault) {
+    logger.error("No vault selected");
+    return;
   }
   
   // Fetch vault state and user balances
@@ -115,7 +120,7 @@ export async function addLiquidity(
   const spinner = ora("Getting mint amounts...").start();
   const { shares, baseAmount, quoteAmount } = await getMintAmounts(
     publicClient,
-    vault,
+    vault.address,
     baseAmountMax,
     quoteAmountMax
   );
@@ -142,7 +147,7 @@ export async function addLiquidity(
     walletClient, 
     account, 
     registry.vault.MINT_HELPER, 
-    vault, 
+    vault.address, 
     baseAmountMax, 
     quoteAmountMax, 
     0n, // Minimum shares to receive (0 means no minimum)

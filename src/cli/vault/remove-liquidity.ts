@@ -12,10 +12,11 @@ import {
 import type { RegistryEntry } from "../../registry";
 import { getCurrentVaultState, type CurrentVaultState } from "../../vault/read";
 import { getBalanceForToken } from "../balances";
-import { selectAddress, selectVault } from "../select";
+import { selectAddress, selectVault, type SavedVault } from "../select";
 import ora from "ora";
 import inquirer from "inquirer";
 import { burn } from "../../vault/burn";
+import { logger } from "../../utils/logger";
 
 /**
  * Guides the user through removing liquidity from a vault
@@ -37,12 +38,16 @@ export async function removeLiquidity(
   walletClient: WalletClient,
   account: Address,
   registry: RegistryEntry,
-  vault?: Address,
+  vault?: SavedVault,
   vaultState?: CurrentVaultState
 ) {
   // Select the vault to remove liquidity from
   if (!vault) {
     vault = await selectVault(publicClient, registry.chain.id);
+  }
+  if (!vault) {
+    logger.error("No vault selected");
+    return;
   }
   
   // Show loading spinner while fetching data
@@ -54,7 +59,7 @@ export async function removeLiquidity(
   );
   
   loader.text = "Fetching vault LP balance...";
-  const balance = await getBalanceForToken(publicClient, account, vault);
+  const balance = await getBalanceForToken(publicClient, account, vault.address);
   loader.succeed("Data fetched successfully");
   
   // Prompt user for the amount of shares to burn
@@ -98,5 +103,5 @@ export async function removeLiquidity(
 
   // Execute the burn transaction with minimum output amounts of 0
   // This means the user accepts any amount of underlying tokens
-  return burn(walletClient, vault, shares, 0n, 0n, vaultData.market);
+  return burn(walletClient, vault.address, shares, 0n, 0n, vaultData.market);
 }
