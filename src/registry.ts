@@ -10,9 +10,9 @@
  * @module registry
  */
 import type { MangroveActionsDefaultParams } from "@mangrovedao/mgv";
-import { arbitrumMangrove, baseMangrove } from "@mangrovedao/mgv/addresses";
+import { arbitrumMangrove, baseMangrove, seiMangrove } from "@mangrovedao/mgv/addresses";
 import type { Address, Chain } from "viem";
-import { arbitrum, base } from "viem/chains";
+import { arbitrum, base, sei } from "viem/chains";
 
 /**
  * Represents an oracle factory configuration
@@ -143,6 +143,42 @@ export const registry: Array<RegistryEntry> = [
       },
     },
     rpcURL: process.env.BASE_RPC_URL,
+  },
+  {
+    chain: sei,
+    mangrove: seiMangrove,
+    vault: {
+      VAULT_FACTORY: "0xd6cc0B43261a73209ccC135207b8Ba98D2Ba369e",
+      MINT_HELPER: "0x1ae53888Ce926ca468C9574DD2cb885B005E0716",
+      SIMPLE_VAULTS_SEEDER: {
+        simple: "0x075420Cb1F213857FCbAF2C9dBfC6cA6295124A3",
+        yei: "0x1a1749b43652B351318DBe4Bb84bc47FDa866E37",
+      },
+      ORACLE_FACTORIES: {
+        chainlinkv2: {
+          oracleFactory: "0x625BC9a1D98f756106b2aeC6b2f14CDDC66f40eb",
+          type: "chainlinkv2",
+        },
+        diav1: {
+          oracleFactory: "0x035d53d54AEf1815e882feA7EF4795De214518A1",
+          type: "diav1",
+        },
+        combinerv1: {
+          oracleFactory: "0xFD8E85387Afe7E3dF1ED7Ec7B81e3de0C6FBeb19",
+          type: "combinerv1",
+        },
+      },
+      ERC4626_VAULT_FACTORIES: {
+        erc4626: "0xADbB100770e1F9aC61eAC9ccA2eC05A0A66956A0",
+      },
+      ERC4626_VAULT_SEEDERS: {
+        erc4626: "0x9c5AD9d0Fc127Af40B7Cd6279B696607e258BB11",
+      },
+    },
+    chainlinkMetadataLink:
+      "https://reference-data-directory.vercel.app/feeds-ethereum-mainnet-sei-1.json",
+    rebalance: {},
+    rpcURL: process.env.SEI_RPC_URL,
   },
   {
     chain: arbitrum,
