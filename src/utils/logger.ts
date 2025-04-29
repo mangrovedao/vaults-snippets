@@ -1,9 +1,9 @@
 /**
  * Logger Utility Module
- * 
+ *
  * This module provides logging functionality for the CLI application,
  * including transaction handling, data formatting, and console output utilities.
- * 
+ *
  * @module utils/logger
  */
 import ora from "ora";
@@ -34,7 +34,7 @@ import type { FeeData } from "../vault/fee";
 
 /**
  * Configuration for transaction messages
- * 
+ *
  * @property header - Optional message to display before the transaction is sent
  * @property label - Optional label for the transaction (default: "Transaction")
  * @property success - Optional message or function to generate a message on success
@@ -55,27 +55,27 @@ export const logger = {
    * Logs informational messages
    */
   info: console.log,
-  
+
   /**
    * Logs error messages
    */
   error: console.error,
-  
+
   /**
    * Logs warning messages
    */
   warn: console.warn,
-  
+
   /**
    * Logs debug messages
    */
   debug: console.debug,
-  
+
   /**
    * Logs stack traces
    */
   trace: console.trace,
-  
+
   /**
    * Logs data in tabular format
    */
@@ -85,13 +85,13 @@ export const logger = {
    * Clears the console
    */
   clear: console.clear,
-  
+
   /**
    * Handles blockchain transaction requests with visual feedback
-   * 
+   *
    * Displays a spinner while the transaction is pending and appropriate
    * success or failure messages once the transaction is confirmed.
-   * 
+   *
    * @param request - The transaction request parameters
    * @param client - The blockchain client
    * @param messages - Optional configuration for transaction messages
@@ -107,32 +107,37 @@ export const logger = {
       logger.info(messages.header);
     }
     const spinner = ora(`[${label}] Broadcasting transaction...`).start();
-    const tx = await writeContract(client, request);
-    spinner.text = `[${label}] Waiting for transaction ${tx}...`;
-    const receipt = await waitForTransactionReceipt(client, { hash: tx });
-    if (receipt.status === "success") {
-      spinner.succeed(
-        messages?.success
-          ? typeof messages.success === "function"
-            ? messages.success(receipt.blockNumber, receipt.transactionHash)
-            : messages.success
-          : `[${label}] Transaction ${tx} confirmed in block ${receipt.blockNumber}: ${receipt.transactionHash}`
-      );
-    } else {
-      spinner.fail(
-        messages?.failure
-          ? typeof messages.failure === "function"
-            ? messages.failure(receipt.transactionHash)
-            : messages.failure
-          : `[${label}] Transaction ${tx} failed: ${receipt.status}: ${receipt.transactionHash}`
-      );
+    try {
+      const tx = await writeContract(client, request);
+      spinner.text = `[${label}] Waiting for transaction ${tx}...`;
+      const receipt = await waitForTransactionReceipt(client, { hash: tx });
+      if (receipt.status === "success") {
+        spinner.succeed(
+          messages?.success
+            ? typeof messages.success === "function"
+              ? messages.success(receipt.blockNumber, receipt.transactionHash)
+              : messages.success
+            : `[${label}] Transaction ${tx} confirmed in block ${receipt.blockNumber}: ${receipt.transactionHash}`
+        );
+      } else {
+        spinner.fail(
+          messages?.failure
+            ? typeof messages.failure === "function"
+              ? messages.failure(receipt.transactionHash)
+              : messages.failure
+            : `[${label}] Transaction ${tx} failed: ${receipt.status}: ${receipt.transactionHash}`
+        );
+      }
+      return receipt;
+    } catch (error) {
+      spinner.fail(`[${label}] Transaction failed: ${error}`);
+      throw error;
     }
-    return receipt;
   },
-  
+
   /**
    * Logs vault position parameters in a formatted table
-   * 
+   *
    * @param params - The position parameters to log
    */
   logParams: (params: Params) => {
@@ -145,10 +150,10 @@ export const logger = {
       "price points": params.pricePoints,
     });
   },
-  
+
   /**
    * Logs the funds state of a vault position
-   * 
+   *
    * @param fundsState - The funds state to log
    */
   logFundState: (fundsState: FundsState) => {
@@ -160,10 +165,10 @@ export const logger = {
         : "Funds are in the vault";
     logger.info(fundStateLabel);
   },
-  
+
   /**
    * Logs detailed information about a vault position
-   * 
+   *
    * @param position - The position data to log
    * @param market - Optional market parameters for price formatting
    */
@@ -190,10 +195,10 @@ export const logger = {
     const label = market ? "price points" : "ticks";
     logger.table(pricePoints.map((p) => ({ [label]: p })));
   },
-  
+
   /**
    * Logs fee information for a vault
-   * 
+   *
    * @param fees - The fee data to log
    */
   logFees: (fees: FeeData) => {

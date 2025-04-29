@@ -60,9 +60,9 @@ export async function deployOracleForm(
   const factory = await chooseOracleFactory(registry);
   switch (factory.type) {
     case "chainlinkv1":
-      return deployChainlinkV1OracleForm(client, market.base, market.quote, factory.oracleFactory, sender, registry.chainlinkMetadataLink);
+      return deployChainlinkV1OracleForm(client, market.base, market.quote, factory.oracleFactory, sender);
     case "chainlinkv2":
-      return deployChainlinkV2OracleForm(client, market.base, market.quote, factory.oracleFactory, registry.chainlinkMetadataLink);
+      return deployChainlinkV2OracleForm(client, market.base, market.quote, factory.oracleFactory);
     case "diav1":
       return deployDiaV1OracleForm(client, market.base, market.quote, factory.oracleFactory);
     case "combinerv1":

@@ -59,40 +59,7 @@ function scoreForFeed(feed: ChainLinkFeedDoc, searchTerm: string) {
   return 0;
 }
 
-export async function chooseFeed(
-  feeds: ChainLinkFeedDoc[],
-  message = "Find a Chainlink feed"
-): Promise<ChainLinkFeedDoc> {
-  return autocomplete({
-    message,
-    source: async (input) => {
-      const searchTerm = (input || "").toLowerCase();
-      const feedsWithScores: (ChainLinkFeedDoc & {
-        score: number;
-      })[] = feeds
-        .filter((f) => !f.hidden)
-        .map((feed) => ({
-          ...feed,
-          score: scoreForFeed(feed, searchTerm),
-        }));
-      return feedsWithScores
-        .sort((a, b) => b.score - a.score)
-        .map(
-          (
-            feed: ChainLinkFeedDoc & {
-              score: number;
-            }
-          ) => ({
-            value: feed,
-            name: `${feed.pair.join("/")} (${feed.proxyAddress})`,
-          })
-        );
-    },
-  });
-}
-
 export async function chooseChainlinkFeeds(
-  feeds: ChainLinkFeedDoc[],
   base: Token,
   quote: Token,
   intermediaryDecimals: number = 18
@@ -102,7 +69,7 @@ export async function chooseChainlinkFeeds(
   quoteFeed1: ChainlinkFeed | undefined;
   quoteFeed2: ChainlinkFeed | undefined;
 }> {
-  const { nBase, nQuote, chooseFeeds } = (await inquirer.prompt([
+  const { nBase, nQuote } = (await inquirer.prompt([
     {
       type: "number",
       name: "nBase",
@@ -127,42 +94,29 @@ export async function chooseChainlinkFeeds(
         return true;
       },
     },
-    {
-      type: "confirm",
-      name: "chooseFeeds",
-      message: "Do you want to choose the feeds from local list?",
-      default: false,
-    },
-  ])) as { nBase: number; nQuote: number; chooseFeeds: boolean };
-
-  async function feedSelection(message: string) {
-    if (chooseFeeds) {
-      return (await chooseFeed(feeds, message)).proxyAddress;
-    }
-    return await selectAddress(message);
-  }
+  ])) as { nBase: number; nQuote: number; };
 
   const baseFeed1 =
     nBase > 0
-      ? await feedSelection(
+      ? await selectAddress(
           `Choose base feed 1 for ${base.symbol}/${quote.symbol}`
         )
       : zeroAddress;
   const baseFeed2 =
     nBase > 1
-      ? await feedSelection(
+      ? await selectAddress(
           `Choose base feed 2 for ${base.symbol}/${quote.symbol}`
         )
       : zeroAddress;
   const quoteFeed1 =
     nQuote > 0
-      ? await feedSelection(
+      ? await selectAddress(
           `Choose quote feed 1 for ${base.symbol}/${quote.symbol}`
         )
       : zeroAddress;
   const quoteFeed2 =
     nQuote > 1
-      ? await feedSelection(
+      ? await selectAddress(
           `Choose quote feed 2 for ${base.symbol}/${quote.symbol}`
         )
       : zeroAddress;
