@@ -11,7 +11,6 @@ import type { Hex } from "viem";
 
 import type { Token } from "@mangrovedao/mgv";
 import { type Address, type Client } from "viem";
-import { getFeeds } from "../../../oracle/chainlink/get-feeds";
 import { chooseChainlinkFeeds } from "./chose-feed";
 import inquirer from "inquirer";
 import { logger } from "../../../utils/logger";
@@ -43,17 +42,10 @@ export async function deployChainlinkV1OracleForm(
   quote: Token,
   oracleFactory: Address,
   sender: Address,
-  chainlinkMetadataLink: string,
   intermediaryDecimals: number = 18
 ): Promise<Address | false> {
-  const spinner = ora(
-    `Getting feeds from ${chainlinkMetadataLink}`
-  ).start();
-  const feeds = await getFeeds(chainlinkMetadataLink);
-  spinner.succeed(`Got ${feeds.length} feeds`);
-
   try {
-    const args = await chooseChainlinkFeeds(feeds, base, quote, intermediaryDecimals);
+    const args = await chooseChainlinkFeeds(base, quote, intermediaryDecimals);
     const oracle = await deployChainlinkV1Oracle(
       client,
       oracleFactory,
@@ -76,7 +68,7 @@ export async function deployChainlinkV1OracleForm(
       },
     ])) as { test: boolean };
     if (test) {
-      const args = await chooseChainlinkFeeds(feeds, base, quote, intermediaryDecimals);
+      const args = await chooseChainlinkFeeds(base, quote, intermediaryDecimals);
       for (let i = 0; i < 10; i++) {
         logger.info(`Retrying...`);
         try {

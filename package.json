@@ -6,20 +6,20 @@
     "cli": "bun run src/cli/index.ts"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.4",
+    "@types/bun": "^1.2.10",
     "pino": "^9.6.0",
     "pino-pretty": "^13.0.0"
   },
   "peerDependencies": {
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.3"
   },
   "dependencies": {
-    "@mangrovedao/mgv": "^0.9.19",
+    "@mangrovedao/mgv": "^0.9.20",
     "chalk": "^5.4.1",
-    "inquirer": "^12.4.2",
+    "inquirer": "^12.6.0",
     "inquirer-autocomplete-standalone": "^0.8.1",
     "ora": "^8.2.0",
-    "viem": "^2.23.5",
-    "zod": "^3.24.2"
+    "viem": "^2.28.0",
+    "zod": "^3.24.3"
   }
 }
