@@ -152,7 +152,7 @@ export const registry: Array<RegistryEntry> = [
       MINT_HELPER: "0x1ae53888Ce926ca468C9574DD2cb885B005E0716",
       SIMPLE_VAULTS_SEEDER: {
         simple: "0x075420Cb1F213857FCbAF2C9dBfC6cA6295124A3",
-        yei: "0x1a1749b43652B351318DBe4Bb84bc47FDa866E37",
+        yei: "0x38845D7DAD5bF849E1f77fE89597083FEc5B5D77",
       },
       ORACLE_FACTORIES: {
         chainlinkv2: {
