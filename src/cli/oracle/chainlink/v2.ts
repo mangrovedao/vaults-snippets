@@ -11,8 +11,6 @@ import type { Address } from "viem";
 
 import type { Token } from "@mangrovedao/mgv";
 import type { Client } from "viem";
-import { getFeeds } from "../../../oracle/chainlink/get-feeds";
-import ora from "ora";
 import { logger } from "../../../utils/logger";
 import { chooseChainlinkFeeds } from "./chose-feed";
 import { deployChainlinkV2Oracle } from "../../../oracle/chainlink/v2";
@@ -40,18 +38,10 @@ export async function deployChainlinkV2OracleForm(
   base: Token,
   quote: Token,
   oracleFactory: Address,
-  chainlinkMetadataLink: string,
   intermediaryDecimals: number = 18
 ) {
-  const spinner = ora(
-    `Getting feeds from ${chainlinkMetadataLink}`
-  ).start();
-  const feeds = await getFeeds(chainlinkMetadataLink);
-  spinner.succeed(`Got ${feeds.length} feeds`);
-
   try {
     const args = await chooseChainlinkFeeds(
-      feeds,
       base,
       quote,
       intermediaryDecimals
