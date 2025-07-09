@@ -5,9 +5,11 @@ import { getCurrentVaultState, type CurrentVaultState } from "../../vault/read";
 import inquirer from "inquirer";
 import { logger } from "../../utils/logger";
 import { rebalanceOdos } from "./odos";
+import { rebalanceKame } from "./kame";
 
 export enum RebalanceType {
   ODOS = "Odos protocol",
+  KAME = "Kame protocol",
 }
 
 export async function rebalanceForm(
@@ -52,6 +54,16 @@ export async function rebalanceForm(
     case "odos":
       // Handle Odos rebalance flow
       return await rebalanceOdos(
+        client,
+        vault.address,
+        state,
+        rebalanceType,
+        registry,
+        sender
+      );
+    case "kame":
+      // Handle Kame rebalance flow
+      return await rebalanceKame(
         client,
         vault.address,
         state,

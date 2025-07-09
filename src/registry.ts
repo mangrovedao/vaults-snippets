@@ -62,13 +62,18 @@ export type OdosRebalanceEntry = RebalanceEntry<
   { apiLink: string; assembleUrl: string; contract: Address }
 >;
 
+export type KameRebalanceEntry = RebalanceEntry<
+  "kame",
+  { contract: Address }
+>;
+
 /**
  * Collection of rebalance service configurations
  *
  * Maps service identifiers to their respective configurations.
- * Currently supports Odos as a rebalancing service with API link and contract address.
+ * Currently supports Odos and Kame as rebalancing services.
  */
-type RebalanceEntries = Record<string, OdosRebalanceEntry>;
+type RebalanceEntries = Record<string, OdosRebalanceEntry | KameRebalanceEntry>;
 
 /**
  * Represents a complete entry in the registry for a blockchain network
@@ -177,7 +182,14 @@ export const registry: Array<RegistryEntry> = [
     },
     chainlinkMetadataLink:
       "https://reference-data-directory.vercel.app/feeds-ethereum-mainnet-sei-1.json",
-    rebalance: {},
+    rebalance: {
+      kame: {
+        type: "kame",
+        data: {
+          contract: "0x14bb98581Ac1F1a43fD148db7d7D793308Dc4d80",
+        },
+      },
+    },
     rpcURL: process.env.SEI_RPC_URL,
   },
   {
