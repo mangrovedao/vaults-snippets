@@ -190,7 +190,7 @@ export async function rebalanceKame(
         amountOut: BigInt(quote.amountOut),
         amountInMin,
         sell: action === "sell",
-        gas: 20_000_000n,
+        gas: 10_000_000n,
     });
 
     return success;
