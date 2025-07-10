@@ -67,13 +67,18 @@ export type KameRebalanceEntry = RebalanceEntry<
   { contract: Address }
 >;
 
+export type SymphonyRebalanceEntry = RebalanceEntry<
+  "symphony",
+  { contract: Address }
+>;
+
 /**
  * Collection of rebalance service configurations
  *
  * Maps service identifiers to their respective configurations.
- * Currently supports Odos and Kame as rebalancing services.
+ * Currently supports Odos, Kame, and Symphony as rebalancing services.
  */
-type RebalanceEntries = Record<string, OdosRebalanceEntry | KameRebalanceEntry>;
+type RebalanceEntries = Record<string, OdosRebalanceEntry | KameRebalanceEntry | SymphonyRebalanceEntry>;
 
 /**
  * Represents a complete entry in the registry for a blockchain network
@@ -187,6 +192,12 @@ export const registry: Array<RegistryEntry> = [
         type: "kame",
         data: {
           contract: "0x14bb98581Ac1F1a43fD148db7d7D793308Dc4d80",
+        },
+      },
+      symphony: {
+        type: "symphony",
+        data: {
+          contract: "0x3273dC2d56e4B93AdA05D55871886bD69b4CEf3D",
         },
       },
     },
