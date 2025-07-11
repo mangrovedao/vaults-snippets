@@ -6,10 +6,12 @@ import inquirer from "inquirer";
 import { logger } from "../../utils/logger";
 import { rebalanceOdos } from "./odos";
 import { rebalanceKame } from "./kame";
+import { rebalanceSymphony } from "./symphony";
 
 export enum RebalanceType {
   ODOS = "Odos protocol",
   KAME = "Kame protocol",
+  SYMPHONY = "Symphony protocol",
 }
 
 export async function rebalanceForm(
@@ -64,6 +66,16 @@ export async function rebalanceForm(
     case "kame":
       // Handle Kame rebalance flow
       return await rebalanceKame(
+        client,
+        vault.address,
+        state,
+        rebalanceType,
+        registry,
+        sender
+      );
+    case "symphony":
+      // Handle Symphony rebalance flow
+      return await rebalanceSymphony(
         client,
         vault.address,
         state,
