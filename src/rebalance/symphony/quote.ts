@@ -34,12 +34,13 @@ async function raw_getSymphonyQuote(
         const symphony = new Symphony();
 
         const route = await symphony.getRoute(
-            sellToken.address.toString(),
-            buyToken.address.toString(),
+            sellToken.address.toString().toLowerCase(),
+            buyToken.address.toString().toLowerCase(),
             amountIn.toString(),
             { isRaw: true }
         );
 
+        console.log("route", route);
         if (!route) {
             throw new Error("No route found from Symphony");
         }
@@ -74,7 +75,8 @@ export async function getSymphonyQuote(
     const route = await raw_getSymphonyQuote(sellToken, buyToken, amountIn);
 
     // Extract relevant information from the route
-    const amountOut = BigInt(route.getTotalAmountOut());
+    console.log("getTotalAmountOut()", route.getTotalAmountOut());
+    const amountOut = route.getTotalAmountOut().amountOut
     const gasEstimate = BigInt(route.getGasEstimate ? route.getGasEstimate() : "300000"); // Default gas estimate
 
     // Calculate price impact (simplified calculation)

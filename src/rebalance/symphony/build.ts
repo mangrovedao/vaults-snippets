@@ -54,7 +54,7 @@ export async function buildSymphonySwap(
         // Generate the transaction calldata using Symphony SDK
         const swapData = await params.route.generateCalldata({
             from: vault,
-            route: params.route,
+            route: params.route.route,
             includesNative: params.sellToken.address.toString().toLowerCase() === "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
             slippage: {
                 slippageAmount: "50", // 0.5% default slippage

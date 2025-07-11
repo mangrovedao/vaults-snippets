@@ -17,6 +17,7 @@
     "@kame-ag/aggregator-sdk": "^1.0.4",
     "@kame-ag/sdk-core": "^1.0.0",
     "@mangrovedao/mgv": "^0.9.20",
+    "@openocean.finance/api": "^0.0.3",
     "chalk": "^5.4.1",
     "inquirer": "^12.6.0",
     "inquirer-autocomplete-standalone": "^0.8.1",
