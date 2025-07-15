@@ -15,8 +15,8 @@ export interface OpenOceanSwapParams {
     route: any; // OpenOcean route object
     sellToken: MangroveToken;
     buyToken: MangroveToken;
-    amountInMax: bigint;
-    amountOutMin: bigint;
+    amountInMax: string;
+    amountOutMin: string;
     sell: boolean;
     gas: bigint;
 }

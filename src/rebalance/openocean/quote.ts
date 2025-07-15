@@ -35,7 +35,7 @@ const CHAIN_ID_MAP: Record<number, string> = {
 async function raw_getOpenOceanQuote(
     sellToken: MangroveToken,
     buyToken: MangroveToken,
-    amountIn: bigint,
+    amountIn: string,
     chainId: number
 ): Promise<any> {
     try {
@@ -96,7 +96,7 @@ export async function getOpenOceanQuote(
     vault: Address,
     sellToken: MangroveToken,
     buyToken: MangroveToken,
-    amountIn: bigint,
+    amountIn: string,
     chainId: number
 ): Promise<OpenOceanQuoteResult> {
     try {

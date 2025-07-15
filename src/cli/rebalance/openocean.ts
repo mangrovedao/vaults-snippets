@@ -133,7 +133,7 @@ export async function rebalanceOpenOcean(
                 vault,
                 sellToken,
                 buyToken,
-                amountOut,
+                amountOutFormatted,
                 registry.chain.id
             );
             quoteSpinner.succeed("✅ OpenOcean quote received");
@@ -167,12 +167,15 @@ export async function rebalanceOpenOcean(
         let swapTx;
 
         try {
+            const swapAmountIn = amountOutFormatted;
+            const swapAmountOut = amountInFormatted;
+
             swapTx = await buildOpenOceanSwap(client, vault, {
                 route: quote.route,
                 sellToken,
                 buyToken,
-                amountInMax: quote.amountOut + (quote.amountOut * 100n) / 10000n, // 1% slippage buffer
-                amountOutMin: amountOut,
+                amountInMax: swapAmountIn,
+                amountOutMin: (Number(swapAmountOut) - (Number(swapAmountOut) * 100) / 10000).toString(),// 1% slippage buffer
                 sell: isSell,
                 gas: 8_000_000n, // Conservative gas limit
             }, registry.chain.id);
