@@ -17,10 +17,12 @@
     "@kame-ag/aggregator-sdk": "^1.0.4",
     "@kame-ag/sdk-core": "^1.0.0",
     "@mangrovedao/mgv": "^0.9.20",
+    "@openocean.finance/api": "^0.0.3",
     "chalk": "^5.4.1",
     "inquirer": "^12.6.0",
     "inquirer-autocomplete-standalone": "^0.8.1",
     "ora": "^8.2.0",
+    "symphony-sdk": "^2.4.2",
     "viem": "^2.28.0",
     "zod": "^3.24.3"
   }

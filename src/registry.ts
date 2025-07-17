@@ -67,13 +67,23 @@ export type KameRebalanceEntry = RebalanceEntry<
   { contract: Address }
 >;
 
+export type SymphonyRebalanceEntry = RebalanceEntry<
+  "symphony",
+  { contract: Address }
+>;
+
+export type OpenOceanRebalanceEntry = RebalanceEntry<
+  "openocean",
+  { contract: Address }
+>;
+
 /**
  * Collection of rebalance service configurations
  *
  * Maps service identifiers to their respective configurations.
- * Currently supports Odos and Kame as rebalancing services.
+ * Currently supports Odos, Kame, Symphony, and OpenOcean as rebalancing services.
  */
-type RebalanceEntries = Record<string, OdosRebalanceEntry | KameRebalanceEntry>;
+type RebalanceEntries = Record<string, OdosRebalanceEntry | KameRebalanceEntry | SymphonyRebalanceEntry | OpenOceanRebalanceEntry>;
 
 /**
  * Represents a complete entry in the registry for a blockchain network
@@ -146,6 +156,12 @@ export const registry: Array<RegistryEntry> = [
           contract: "0x19cEeAd7105607Cd444F5ad10dd51356436095a1",
         },
       },
+      openocean: {
+        type: "openocean",
+        data: {
+          contract: "0x6352a56caadC4F1E25CD6c75970Fa768A3304e64", // OpenOcean router for Base
+        },
+      },
     },
     rpcURL: process.env.BASE_RPC_URL,
   },
@@ -189,6 +205,18 @@ export const registry: Array<RegistryEntry> = [
           contract: "0x14bb98581Ac1F1a43fD148db7d7D793308Dc4d80",
         },
       },
+      symphony: {
+        type: "symphony",
+        data: {
+          contract: "0x3273dC2d56e4B93AdA05D55871886bD69b4CEf3D",
+        },
+      },
+      openocean: {
+        type: "openocean",
+        data: {
+          contract: "0x6352a56caadC4F1E25CD6c75970Fa768A3304e64",
+        },
+      },
     },
     rpcURL: process.env.SEI_RPC_URL,
   },
@@ -220,6 +248,12 @@ export const registry: Array<RegistryEntry> = [
           apiLink: "https://api.odos.xyz/sor/quote/v2",
           contract: "0xa669e7A0d4b3e4Fa48af2dE86BD4CD7126Be4e13",
           assembleUrl: "https://api.odos.xyz/sor/assemble/v2",
+        },
+      },
+      openocean: {
+        type: "openocean",
+        data: {
+          contract: "0x6352a56caadC4F1E25CD6c75970Fa768A3304e64", // OpenOcean router for Arbitrum
         },
       },
     },
